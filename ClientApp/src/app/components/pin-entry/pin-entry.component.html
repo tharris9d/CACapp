@@ -1,0 +1,41 @@
+<div class="pin-entry-overlay" (click)="onCancel()">
+  <div class="pin-entry-dialog" (click)="$event.stopPropagation()">
+    <div class="pin-entry-header">
+      <h5>Enter CAC Card PIN</h5>
+      <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+    </div>
+    <div class="pin-entry-body">
+      <p class="pin-instructions">Please enter your CAC card PIN to access the certificate.</p>
+      <div class="mb-3">
+        <label for="pinInput" class="form-label">PIN</label>
+        <div class="input-group">
+          <input 
+            type="{{ showPin ? 'text' : 'password' }}" 
+            class="form-control" 
+            id="pinInput"
+            [(ngModel)]="pin" 
+            (keydown)="onKeyDown($event)"
+            placeholder="Enter PIN"
+            autocomplete="off"
+            maxlength="20"
+            #pinInput>
+          <button 
+            class="btn btn-outline-secondary" 
+            type="button" 
+            (click)="toggleShowPin()"
+            title="{{ showPin ? 'Hide PIN' : 'Show PIN' }}">
+            {{ showPin ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        <div *ngIf="errorMessage" class="text-danger mt-2">
+          {{ errorMessage }}
+        </div>
+      </div>
+    </div>
+    <div class="pin-entry-footer">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="onSubmit()">Submit</button>
+    </div>
+  </div>
+</div>
+

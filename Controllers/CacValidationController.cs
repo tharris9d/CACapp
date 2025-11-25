@@ -1,0 +1,101 @@
+using Microsoft.AspNetCore.Mvc;
+using CACApp.Services;
+using CACApp.Models;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
+
+namespace CACApp.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class CacValidationController : ControllerBase
+{
+    private readonly ICacValidationService _cacValidationService;
+    private readonly ILogger<CacValidationController> _logger;
+
+    public CacValidationController(ICacValidationService cacValidationService, ILogger<CacValidationController> logger)
+    {
+        _cacValidationService = cacValidationService;
+        _logger = logger;
+    }
+
+    [HttpPost("validate-online")]
+    public async Task<ActionResult<ValidationResultDto>> ValidateOnline([FromBody] CertificateRequest request)
+    {
+        try
+        {
+            var certificate = ConvertFromBase64(request.CertificateBase64);
+            if (certificate == null)
+            {
+                return BadRequest(new { error = "Invalid certificate data" });
+            }
+
+            var result = await _cacValidationService.ValidateCacOnlineAsync(certificate);
+
+            var dto = new ValidationResultDto
+            {
+                IsValid = result.IsValid,
+                Status = result.Status,
+                Category = result.Category,
+                Details = result.Details,
+                ValidationTime = result.ValidationTime,
+                OnlineValidationFailed = result.OnlineValidationFailed,
+                OnlineValidationFailureReason = result.OnlineValidationFailureReason
+            };
+
+            return Ok(dto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating CAC online");
+            return StatusCode(500, new { error = "Failed to validate CAC online" });
+        }
+    }
+
+    private X509Certificate2? ConvertFromBase64(string base64)
+    {
+        try
+        {
+            var bytes = Convert.FromBase64String(base64);
+
+            // Try loading as PEM first
+            try
+            {
+                var pemString = System.Text.Encoding.UTF8.GetString(bytes);
+                if (pemString.Contains("-----BEGIN CERTIFICATE-----"))
+                {
+                    // CreateFromPem requires the raw PEM string; ensure we pass the full string
+                    return X509Certificate2.CreateFromPem(pemString);
+                }
+            }
+            catch
+            {
+                // Not PEM format, continue to DER
+            }
+
+            // For DER format, use the constructor with warning suppression
+            // Note: The recommended X509CertificateLoader API doesn't have a direct
+            // method for loading from byte arrays in .NET 9.0.305
+            // This is a known limitation and the constructor still works correctly.
+#pragma warning disable SYSLIB0057
+            return new X509Certificate2(bytes);
+#pragma warning restore SYSLIB0057
+        }
+        catch
+        {
+            return null;
+        }
+    }
+}
+
+public class ValidationResultDto
+{
+    public bool IsValid { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public List<string> Details { get; set; } = new();
+    public DateTime ValidationTime { get; set; }
+    public bool OnlineValidationFailed { get; set; }
+    public string? OnlineValidationFailureReason { get; set; }
+}
+

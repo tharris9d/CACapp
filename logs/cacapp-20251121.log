@@ -1,0 +1,64 @@
+[2025-11-21 14:47:06.535 -08:00 INF] Starting CAC Application
+[2025-11-21 14:48:31.171 -08:00 INF] Starting CAC Application
+[2025-11-21 14:49:33.850 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-21 14:49:44.910 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-21 14:50:02.313 -08:00 INF] Getting certificate chain info for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 14:50:02.322 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-21 14:50:02.334 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-21 14:50:02.342 -08:00 DBG] Chain element 0: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=1
+[2025-11-21 14:50:02.346 -08:00 DBG] Element status: Certificate=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status="Revoked", Info=The certificate is revoked.
+[2025-11-21 14:50:02.363 -08:00 WRN] Certificate REVOKED: Certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Reason: The certificate is revoked.
+[2025-11-21 14:50:02.365 -08:00 DBG] Chain element 1: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-21 14:50:02.368 -08:00 DBG] Chain element 2: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-21 14:50:02.372 -08:00 INF] Final chain validation result: IsValid=false, HasRevocation=true, ErrorCount=1
+[2025-11-21 14:50:02.375 -08:00 DBG] Building final chain elements list. Chain length: 3
+[2025-11-21 14:50:02.376 -08:00 DBG] Chain element: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 14:50:02.378 -08:00 DBG] Chain element: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=737BEAA4D4563E186D6B4C455330579FA085A3BF
+[2025-11-21 14:50:02.379 -08:00 DBG] Chain element: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=D73CA91102A2204A36459ED32213B467D7CE97FB
+[2025-11-21 14:50:17.291 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 14:50:17.299 -08:00 INF] Certificate category determined: Government
+[2025-11-21 14:50:17.302 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-21 14:50:17.304 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-21 14:50:17.306 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-21 14:50:17.308 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-21 14:50:17.312 -08:00 WRN] Certificate chain validation failed: Certificate is REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-21 14:50:17.315 -08:00 WRN] CAC validation failed: Certificate chain validation failed for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-21 14:58:04.345 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 14:58:04.348 -08:00 INF] Certificate category determined: Government
+[2025-11-21 14:58:04.349 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-21 14:58:04.352 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-21 14:58:04.359 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-21 14:58:04.361 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-21 14:58:04.366 -08:00 WRN] Certificate chain validation failed: Certificate is REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-21 14:58:04.370 -08:00 WRN] CAC validation failed: Certificate chain validation failed for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-21 15:03:06.244 -08:00 INF] Starting CAC Application
+[2025-11-21 15:22:39.491 -08:00 INF] Starting CAC Application
+[2025-11-21 15:30:11.007 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-21 15:30:31.492 -08:00 INF] Getting certificate chain info for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 15:30:31.495 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-21 15:30:31.534 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-21 15:30:31.541 -08:00 DBG] Chain element 0: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=1
+[2025-11-21 15:30:31.550 -08:00 DBG] Element status: Certificate=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status="Revoked", Info=The certificate is revoked.
+[2025-11-21 15:30:31.585 -08:00 WRN] Certificate REVOKED: Certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Reason: The certificate is revoked.
+[2025-11-21 15:30:31.590 -08:00 DBG] Chain element 1: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-21 15:30:31.597 -08:00 DBG] Chain element 2: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-21 15:30:31.600 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-21 15:30:31.606 -08:00 INF] Offline chain build result: true, Chain elements: 3
+[2025-11-21 15:30:31.613 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-21 15:30:31.620 -08:00 INF] Final chain validation result: IsValid=true, HasRevocation=false, ErrorCount=1
+[2025-11-21 15:30:31.630 -08:00 DBG] Building final chain elements list. Chain length: 3
+[2025-11-21 15:30:31.638 -08:00 DBG] Chain element: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 15:30:31.646 -08:00 DBG] Chain element: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=737BEAA4D4563E186D6B4C455330579FA085A3BF
+[2025-11-21 15:30:31.651 -08:00 DBG] Chain element: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=D73CA91102A2204A36459ED32213B467D7CE97FB
+[2025-11-21 15:30:47.353 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-21 15:30:47.359 -08:00 INF] Certificate category determined: Government
+[2025-11-21 15:30:47.362 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-21 15:30:47.365 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-21 15:30:47.367 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-21 15:30:47.369 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-21 15:30:47.371 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-21 15:30:47.373 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-21 15:30:47.374 -08:00 INF] Offline chain build result: true
+[2025-11-21 15:30:47.377 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-21 15:30:47.378 -08:00 INF] Certificate chain validation succeeded
+[2025-11-21 15:30:47.382 -08:00 INF] CAC validation succeeded: Valid Government CAC
