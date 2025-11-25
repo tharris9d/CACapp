@@ -1,0 +1,471 @@
+<div class="status-panel">
+  <div class="status-title">{{ statusTitle }}</div>
+  <div class="status-details">{{ statusDetails }}</div>
+</div>
+
+<app-pin-entry 
+  *ngIf="showPinEntry"
+  (pinSubmitted)="onPinSubmitted($event)"
+  (cancelled)="onPinCancelled()">
+</app-pin-entry>
+
+<app-password-prompt 
+  *ngIf="showPasswordPrompt"
+  (passwordSubmitted)="onPasswordSubmittedForExport($event)"
+  (cancelled)="onPasswordCancelledForExport()">
+</app-password-prompt>
+
+<app-password-prompt 
+  *ngIf="showPasswordPromptForImport"
+  (passwordSubmitted)="onPasswordSubmittedForImport($event)"
+  (cancelled)="onPasswordCancelledForImport()">
+</app-password-prompt>
+
+<div class="container-fluid p-4">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">CAC Reader</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Available Readers:</label>
+            <select class="form-select" [(ngModel)]="selectedReader" [disabled]="isLoading || availableReaders.length === 0">
+              <option [value]="null" disabled>
+                {{ availableReaders.length === 0 ? 'No readers found' : 'Select a reader' }}
+              </option>
+              <option *ngFor="let reader of availableReaders" [value]="reader">{{ reader }}</option>
+            </select>
+            <div *ngIf="availableReaders.length === 0 && !isLoading" class="mt-2">
+              <small class="text-danger">
+                <strong>Troubleshooting:</strong><br>
+                • Ensure your smart card reader is connected via USB<br>
+                • Install the latest drivers for your reader<br>
+                • Verify Windows Smart Card service is running (run 'sc query SCardSvr' in Command Prompt)<br>
+                • Try restarting the Windows Smart Card service
+              </small>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-secondary" (click)="checkReaders()" [disabled]="isLoading">
+              🔄 Refresh Readers
+            </button>
+            <button class="btn btn-primary" (click)="readCacCard()" 
+                    [disabled]="!selectedReader || isLoading">
+              📥 Read CAC Card
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Certificate Information</div>
+        <div class="card-body p-0">
+          <textarea class="text-box form-control border-0" readonly 
+                    [value]="certificateInfo" rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Certificate Actions</div>
+        <div class="card-body">
+          <div class="d-flex flex-column gap-2">
+            <button class="btn btn-primary" (click)="validateChain()" 
+                    [disabled]="!currentCertificate || isLoading">
+              🔗 Validate Certificate Chain
+            </button>
+            <button class="btn btn-primary" (click)="validateOnline()" 
+                    [disabled]="!currentCertificate || isLoading">
+              🌐 Validate Online (GOVT/Military/Contractor)
+            </button>
+            <button class="btn btn-secondary" (click)="storeCertificate()" 
+                    [disabled]="!currentCertificate || isLoading">
+              💾 Store Certificate
+            </button>
+            <button class="btn btn-info" (click)="checkCrlOcspStatus()" 
+                    [disabled]="!currentCertificate || isLoading">
+              🔍 Check CRL/OCSP Status
+            </button>
+            <button class="btn btn-success" (click)="viewCertificateDetails()" 
+                    [disabled]="!currentCertificate || isLoading">
+              📋 View Detailed Certificate Info
+            </button>
+            <div class="btn-group w-100 mt-2" role="group">
+              <button class="btn btn-warning" type="button" 
+                      [disabled]="!currentCertificate || isLoading">
+                💾 Export
+              </button>
+              <button type="button" class="btn btn-warning dropdown-toggle dropdown-toggle-split" 
+                      data-bs-toggle="dropdown" [disabled]="!currentCertificate || isLoading">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" (click)="exportCertificate(0)">Export as PEM</a></li>
+                <li><a class="dropdown-item" (click)="exportCertificate(1)">Export as DER</a></li>
+                <li><a class="dropdown-item" (click)="exportCertificate(2)">Export as PFX</a></li>
+              </ul>
+            </div>
+            <button class="btn btn-secondary w-100 mt-2" type="button" [disabled]="isLoading">
+              📤 Import Certificate
+              <input type="file" accept=".pem,.der,.pfx,.p12,.crt,.cer" 
+                     (change)="onFileSelected($event)" style="display: none;">
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Certificate Chain</div>
+        <div class="card-body p-0">
+          <textarea class="text-box form-control border-0" readonly 
+                    [value]="chainInfo" rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Online Validation Result</div>
+        <div class="card-body p-0">
+          <textarea class="text-box form-control border-0" readonly 
+                    [value]="validationResult" rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Stored Certificates
+          <button class="btn btn-sm btn-info float-end" (click)="toggleSearchFilters()">
+            🔍 {{ showSearchFilters ? 'Hide' : 'Show' }} Filters
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="showSearchFilters" class="mb-3 p-3 bg-light rounded">
+            <div class="mb-2">
+              <label class="form-label">Search Text:</label>
+              <input type="text" class="form-control form-control-sm" 
+                     [(ngModel)]="searchCriteria.searchText" 
+                     placeholder="Subject, Issuer, or Thumbprint">
+            </div>
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label">Category:</label>
+                <select class="form-select form-select-sm" [(ngModel)]="searchCriteria.category">
+                  <option [value]="undefined">All</option>
+                  <option value="Military">Military</option>
+                  <option value="Government">Government</option>
+                  <option value="Contractor">Contractor</option>
+                  <option value="DOD">DOD</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Status:</label>
+                <select class="form-select form-select-sm" [(ngModel)]="searchCriteria.isActive">
+                  <option [value]="undefined">All</option>
+                  <option [value]="true">Active</option>
+                  <option [value]="false">Inactive</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-2">
+              <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" 
+                       [(ngModel)]="searchCriteria.expiringSoon">
+                Expiring Soon (within 90 days)
+              </label>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary" (click)="searchCertificates()" [disabled]="isLoading">
+                Search
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="clearSearch()" [disabled]="isLoading">
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mb-3">
+            <button class="btn btn-secondary" (click)="loadStoredCertificates()" [disabled]="isLoading">
+              🔄 Refresh
+            </button>
+            <button class="btn btn-danger" (click)="deleteStoredCertificate()" 
+                    [disabled]="selectedStoredIndex === null || isLoading">
+              🗑️ Delete Selected
+            </button>
+            <button class="btn btn-warning" (click)="loadExpiringCertificates()" [disabled]="isLoading">
+              ⏰ Expiring Soon
+            </button>
+          </div>
+          <select class="form-select" size="10" [(ngModel)]="selectedStoredIndex" [disabled]="isLoading">
+            <option *ngFor="let cert of storedCertificates; let i = index" [value]="i">
+              {{ cert.subject }} | 
+              Stored: {{ cert.storedDate | date:'yyyy-MM-dd' }} | 
+              Active: {{ cert.isActive ? 'Yes' : 'No' }}
+              <span *ngIf="cert.daysUntilExpiration !== undefined">
+                | Expires in: {{ cert.daysUntilExpiration }} days
+              </span>
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12" *ngIf="showCertificateDetails && certificateDetails">
+      <div class="card">
+        <div class="card-header">
+          Enhanced Certificate Details
+          <button class="btn btn-sm btn-secondary float-end" (click)="showCertificateDetails = false">✕</button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Basic Information</h6>
+              <table class="table table-sm">
+                <tr><td><strong>Subject:</strong></td><td>{{ certificateDetails.subject }}</td></tr>
+                <tr><td><strong>Issuer:</strong></td><td>{{ certificateDetails.issuer }}</td></tr>
+                <tr><td><strong>Serial Number:</strong></td><td>{{ certificateDetails.serialNumber }}</td></tr>
+                <tr><td><strong>Thumbprint:</strong></td><td>{{ certificateDetails.thumbprint }}</td></tr>
+                <tr><td><strong>Version:</strong></td><td>{{ certificateDetails.version }}</td></tr>
+                <tr><td><strong>Valid From:</strong></td><td>{{ certificateDetails.notBefore | date:'medium' }}</td></tr>
+                <tr><td><strong>Valid To:</strong></td><td>{{ certificateDetails.notAfter | date:'medium' }}</td></tr>
+                <tr [class]="certificateDetails.isExpiringSoon ? 'table-warning' : ''">
+                  <td><strong>Days Until Expiration:</strong></td>
+                  <td>{{ certificateDetails.daysUntilExpiration }} 
+                    <span *ngIf="certificateDetails.isExpiringSoon" class="badge bg-warning">Expiring Soon!</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h6>Key Information</h6>
+              <table class="table table-sm">
+                <tr><td><strong>Signature Algorithm:</strong></td><td>{{ certificateDetails.signatureAlgorithm }}</td></tr>
+                <tr><td><strong>Public Key Algorithm:</strong></td><td>{{ certificateDetails.publicKeyAlgorithm }}</td></tr>
+                <tr><td><strong>Key Size:</strong></td><td>{{ certificateDetails.keySize }} bits</td></tr>
+                <tr><td><strong>Has Private Key:</strong></td><td>{{ certificateDetails.hasPrivateKey ? 'Yes' : 'No' }}</td></tr>
+              </table>
+              <h6>Key Usage</h6>
+              <ul *ngIf="certificateDetails.keyUsage.length > 0">
+                <li *ngFor="let usage of certificateDetails.keyUsage">{{ usage }}</li>
+              </ul>
+              <p *ngIf="certificateDetails.keyUsage.length === 0" class="text-muted">No key usage specified</p>
+              <h6>Extended Key Usage</h6>
+              <ul *ngIf="certificateDetails.extendedKeyUsage.length > 0">
+                <li *ngFor="let usage of certificateDetails.extendedKeyUsage">{{ usage }}</li>
+              </ul>
+              <p *ngIf="certificateDetails.extendedKeyUsage.length === 0" class="text-muted">No extended key usage specified</p>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6" *ngIf="certificateDetails.subjectNameParts && getObjectKeys(certificateDetails.subjectNameParts).length > 0">
+              <h6>Subject Name Parts</h6>
+              <table class="table table-sm">
+                <tr *ngFor="let part of certificateDetails.subjectNameParts | keyvalue">
+                  <td><strong>{{ part.key }}:</strong></td><td>{{ part.value }}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6" *ngIf="certificateDetails.issuerNameParts && getObjectKeys(certificateDetails.issuerNameParts).length > 0">
+              <h6>Issuer Name Parts</h6>
+              <table class="table table-sm">
+                <tr *ngFor="let part of certificateDetails.issuerNameParts | keyvalue">
+                  <td><strong>{{ part.key }}:</strong></td><td>{{ part.value }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="row mt-3" *ngIf="certificateDetails.subjectAlternativeNames.length > 0">
+            <div class="col-12">
+              <h6>Subject Alternative Names</h6>
+              <ul>
+                <li *ngFor="let san of certificateDetails.subjectAlternativeNames">{{ san }}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6" *ngIf="certificateDetails.crlDistributionPoints.length > 0">
+              <h6>CRL Distribution Points</h6>
+              <ul>
+                <li *ngFor="let crl of certificateDetails.crlDistributionPoints"><code>{{ crl }}</code></li>
+              </ul>
+            </div>
+            <div class="col-md-6" *ngIf="certificateDetails.ocspUrls.length > 0">
+              <h6>OCSP URLs</h6>
+              <ul>
+                <li *ngFor="let ocsp of certificateDetails.ocspUrls"><code>{{ ocsp }}</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12" *ngIf="showExpiringCertificates">
+      <div class="card">
+        <div class="card-header">
+          Certificates Expiring Within 90 Days
+          <button class="btn btn-sm btn-secondary float-end" (click)="showExpiringCertificates = false">✕</button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="expiringCertificates.length === 0" class="text-muted">
+            No certificates expiring within 90 days.
+          </div>
+          <div *ngIf="expiringCertificates.length > 0" class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Issuer</th>
+                  <th>Expires</th>
+                  <th>Days Until Expiration</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cert of expiringCertificates" 
+                    [class]="cert.daysUntilExpiration! <= 30 ? 'table-danger' : 'table-warning'">
+                  <td>{{ cert.subject }}</td>
+                  <td>{{ cert.issuer }}</td>
+                  <td>{{ cert.notAfter | date:'medium' }}</td>
+                  <td>
+                    <strong>{{ cert.daysUntilExpiration }}</strong>
+                    <span *ngIf="cert.daysUntilExpiration! <= 30" class="badge bg-danger ms-2">Critical</span>
+                    <span *ngIf="cert.daysUntilExpiration! > 30 && cert.daysUntilExpiration! <= 60" class="badge bg-warning ms-2">Warning</span>
+                  </td>
+                  <td>
+                    <span [class]="cert.isActive ? 'text-success' : 'text-danger'">
+                      {{ cert.isActive ? '✓ Active' : '✗ Inactive' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12" *ngIf="showCrlOcspMonitoring && crlOcspStatus">
+      <div class="card">
+        <div class="card-header">
+          CRL/OCSP Monitoring Status
+          <button class="btn btn-sm btn-secondary float-end" (click)="showCrlOcspMonitoring = false">✕</button>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <strong>Overall Status:</strong> 
+            <span [class]="crlOcspStatus.isAvailable ? 'text-success' : 'text-warning'">
+              {{ crlOcspStatus.isAvailable ? '✓ Available' : '⚠ Some services unavailable' }}
+            </span>
+            <span class="text-muted ms-2">Checked: {{ formatDate(crlOcspStatus.checkTime) }}</span>
+          </div>
+
+          <div *ngIf="crlOcspStatus.crlStatuses.length > 0" class="mb-4">
+            <h6>CRL Distribution Points</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Response Time</th>
+                    <th>Last Update</th>
+                    <th>Next Update</th>
+                    <th>Revoked Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let crl of crlOcspStatus.crlStatuses" 
+                      [class]="crl.isAccessible ? 'table-success' : 'table-danger'">
+                    <td><small>{{ crl.url }}</small></td>
+                    <td>
+                      <span [class]="crl.isAccessible ? 'text-success' : 'text-danger'">
+                        {{ crl.isAccessible ? '✓ Accessible' : '✗ Inaccessible' }}
+                      </span>
+                    </td>
+                    <td>{{ formatResponseTime(crl.responseTimeMs) }}</td>
+                    <td><small>{{ formatDate(crl.lastUpdate) }}</small></td>
+                    <td><small>{{ formatDate(crl.nextUpdate) }}</small></td>
+                    <td>{{ crl.revokedCertificateCount ?? 'N/A' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngFor="let crl of crlOcspStatus.crlStatuses" class="mt-2">
+              <div *ngIf="crl.errorMessage" class="text-danger small">
+                <strong>Error:</strong> {{ crl.errorMessage }}
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="crlOcspStatus.ocspStatuses.length > 0">
+            <h6>OCSP Responders</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Response Time</th>
+                    <th>Response Status</th>
+                    <th>Revoked</th>
+                    <th>This Update</th>
+                    <th>Next Update</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ocsp of crlOcspStatus.ocspStatuses" 
+                      [class]="ocsp.isAccessible ? 'table-success' : 'table-danger'">
+                    <td><small>{{ ocsp.url }}</small></td>
+                    <td>
+                      <span [class]="ocsp.isAccessible ? 'text-success' : 'text-danger'">
+                        {{ ocsp.isAccessible ? '✓ Accessible' : '✗ Inaccessible' }}
+                      </span>
+                    </td>
+                    <td>{{ formatResponseTime(ocsp.responseTimeMs) }}</td>
+                    <td>{{ ocsp.responseStatus || 'N/A' }}</td>
+                    <td>
+                      <span *ngIf="ocsp.isRevoked !== undefined" 
+                            [class]="ocsp.isRevoked ? 'text-danger' : 'text-success'">
+                        {{ ocsp.isRevoked ? 'Yes' : 'No' }}
+                      </span>
+                      <span *ngIf="ocsp.isRevoked === undefined">N/A</span>
+                    </td>
+                    <td><small>{{ formatDate(ocsp.thisUpdate) }}</small></td>
+                    <td><small>{{ formatDate(ocsp.nextUpdate) }}</small></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngFor="let ocsp of crlOcspStatus.ocspStatuses" class="mt-2">
+              <div *ngIf="ocsp.errorMessage" class="text-danger small">
+                <strong>Error:</strong> {{ ocsp.errorMessage }}
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="crlOcspStatus.crlStatuses.length === 0 && crlOcspStatus.ocspStatuses.length === 0" class="text-muted">
+            No CRL or OCSP distribution points found in certificate.
+          </div>
+
+          <div *ngIf="revocationDistributionPoints.length > 0" class="mt-3">
+            <h6>Revocation Distribution Points Found</h6>
+            <ul class="list-unstyled">
+              <li *ngFor="let dp of revocationDistributionPoints">
+                <strong>{{ dp.type }}:</strong> <code>{{ dp.url }}</code>
+                <span *ngIf="dp.description" class="text-muted"> - {{ dp.description }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

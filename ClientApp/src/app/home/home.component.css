@@ -1,0 +1,32 @@
+.status-panel {
+  background-color: #667eea;
+  color: white;
+  padding: 20px;
+}
+
+.status-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.status-details {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.text-box {
+  font-family: 'Consolas', monospace;
+  font-size: 12px;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  min-height: 200px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+select[size] {
+  height: auto;
+}
+

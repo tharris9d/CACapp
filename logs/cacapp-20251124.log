@@ -1,0 +1,321 @@
+[2025-11-24 07:59:39.689 -08:00 INF] Starting CAC Application
+[2025-11-24 08:00:57.176 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-24 08:01:03.219 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-24 08:01:17.695 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:01:34.429 -08:00 INF] Getting certificate chain info for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 08:01:34.432 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 08:01:34.476 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 08:01:34.480 -08:00 DBG] Chain element 0: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=1
+[2025-11-24 08:01:34.482 -08:00 DBG] Element status: Certificate=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status="Revoked", Info=The certificate is revoked.
+[2025-11-24 08:01:34.501 -08:00 WRN] Certificate REVOKED: Certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Reason: The certificate is revoked.
+[2025-11-24 08:01:34.503 -08:00 DBG] Chain element 1: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 08:01:34.507 -08:00 DBG] Chain element 2: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 08:01:34.511 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 08:01:34.514 -08:00 INF] Offline chain build result: true, Chain elements: 3
+[2025-11-24 08:01:34.517 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 08:01:34.518 -08:00 INF] Final chain validation result: IsValid=true, HasRevocation=false, ErrorCount=1
+[2025-11-24 08:01:34.522 -08:00 DBG] Building final chain elements list. Chain length: 3
+[2025-11-24 08:01:34.525 -08:00 DBG] Chain element: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 08:01:34.528 -08:00 DBG] Chain element: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=737BEAA4D4563E186D6B4C455330579FA085A3BF
+[2025-11-24 08:01:34.530 -08:00 DBG] Chain element: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=D73CA91102A2204A36459ED32213B467D7CE97FB
+[2025-11-24 08:02:06.686 -08:00 INF] Checking CRL/OCSP status for certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:02:06.689 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:02:06.694 -08:00 DBG] Checking CRL status: http://crl.disa.mil/crl/DODEMAILCA_71.crl
+[2025-11-24 08:02:06.757 -08:00 DBG] Checking OCSP status: http://ocsp.disa.mil for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:02:07.153 -08:00 ERR] Error checking OCSP: http://ocsp.disa.mil
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at CACApp.Services.CrlOcspMonitoringService.CheckOcspStatusAsync(String ocspUrl, X509Certificate2 certificate) in C:\Users\tom.harris\Documents\CACApp\Services\CrlOcspMonitoringService.cs:line 151
+[2025-11-24 08:02:07.445 -08:00 DBG] CRL parsed successfully. LastUpdate: null, NextUpdate: null, RevokedCount: 0
+[2025-11-24 08:02:07.448 -08:00 INF] CRL/OCSP check completed. CRL accessible: true, OCSP accessible: false
+[2025-11-24 08:29:28.781 -08:00 INF] Starting CAC Application
+[2025-11-24 08:45:35.008 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-24 08:46:10.930 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:46:16.573 -08:00 INF] Getting certificate chain info for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 08:46:16.575 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 08:46:16.588 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 08:46:16.590 -08:00 DBG] Chain element 0: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=1
+[2025-11-24 08:46:16.595 -08:00 DBG] Element status: Certificate=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status="Revoked", Info=The certificate is revoked.
+[2025-11-24 08:46:16.612 -08:00 WRN] Certificate REVOKED: Certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Reason: The certificate is revoked.
+[2025-11-24 08:46:16.614 -08:00 DBG] Chain element 1: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 08:46:16.618 -08:00 DBG] Chain element 2: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 08:46:16.621 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 08:46:16.623 -08:00 INF] Offline chain build result: true, Chain elements: 3
+[2025-11-24 08:46:16.625 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 08:46:16.626 -08:00 INF] Final chain validation result: IsValid=true, HasRevocation=false, ErrorCount=1
+[2025-11-24 08:46:16.630 -08:00 DBG] Building final chain elements list. Chain length: 3
+[2025-11-24 08:46:16.634 -08:00 DBG] Chain element: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 08:46:16.637 -08:00 DBG] Chain element: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=737BEAA4D4563E186D6B4C455330579FA085A3BF
+[2025-11-24 08:46:16.641 -08:00 DBG] Chain element: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=D73CA91102A2204A36459ED32213B467D7CE97FB
+[2025-11-24 08:46:20.466 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 08:46:20.474 -08:00 INF] Certificate category determined: Government
+[2025-11-24 08:46:20.478 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:46:20.481 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 08:46:20.483 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 08:46:20.485 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 08:46:20.487 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 08:46:20.489 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 08:46:20.491 -08:00 INF] Offline chain build result: true
+[2025-11-24 08:46:20.492 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 08:46:20.494 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 08:46:20.496 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 08:46:20.499 -08:00 INF] CAC validation succeeded: Valid Government CAC
+[2025-11-24 08:46:36.996 -08:00 INF] Checking CRL/OCSP status for certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:46:36.997 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:46:37.002 -08:00 DBG] Checking CRL status: http://crl.disa.mil/crl/DODEMAILCA_71.crl
+[2025-11-24 08:46:37.099 -08:00 DBG] Checking OCSP status: http://ocsp.disa.mil for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:46:37.371 -08:00 ERR] Error checking OCSP: http://ocsp.disa.mil
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at CACApp.Services.CrlOcspMonitoringService.CheckOcspStatusAsync(String ocspUrl, X509Certificate2 certificate) in C:\Users\tom.harris\Documents\CACApp\Services\CrlOcspMonitoringService.cs:line 151
+[2025-11-24 08:46:37.831 -08:00 DBG] CRL parsed successfully. LastUpdate: null, NextUpdate: null, RevokedCount: 0
+[2025-11-24 08:46:37.833 -08:00 INF] CRL/OCSP check completed. CRL accessible: true, OCSP accessible: false
+[2025-11-24 08:47:21.229 -08:00 INF] Getting detailed certificate information for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 08:47:21.249 -08:00 INF] Certificate details extracted successfully. KeyUsage count: 2, SAN count: 0
+[2025-11-24 08:47:27.787 -08:00 INF] Exporting certificate 37FB1EDB5882A8A8EF1A97841740A5BB6999686F in format "Pem"
+[2025-11-24 08:47:27.790 -08:00 INF] Certificate exported successfully. Size: 1727 bytes
+[2025-11-24 08:47:45.543 -08:00 INF] Exporting certificate 37FB1EDB5882A8A8EF1A97841740A5BB6999686F in format "Pfx"
+[2025-11-24 08:47:45.546 -08:00 ERR] Error exporting certificate
+System.ArgumentException: Password is required for PFX export
+   at CACApp.Services.CertificateExportService.<>c__DisplayClass2_0.<ExportCertificateAsync>b__0() in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 46
+[2025-11-24 08:47:45.549 -08:00 ERR] Error exporting certificate
+System.ArgumentException: Password is required for PFX export
+   at CACApp.Services.CertificateExportService.<>c__DisplayClass2_0.<ExportCertificateAsync>b__0() in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 46
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CACApp.Services.CertificateExportService.ExportCertificateAsync(X509Certificate2 certificate, CertificateExportFormat format, String password) in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 18
+   at CACApp.Controllers.CertificateExportController.ExportCertificate(CertificateExportRequest request) in C:\Users\tom.harris\Documents\CACApp\Controllers\CertificateExportController.cs:line 33
+[2025-11-24 08:47:51.858 -08:00 INF] Exporting certificate 37FB1EDB5882A8A8EF1A97841740A5BB6999686F in format "Pfx"
+[2025-11-24 08:47:51.861 -08:00 ERR] Error exporting certificate
+System.ArgumentException: Password is required for PFX export
+   at CACApp.Services.CertificateExportService.<>c__DisplayClass2_0.<ExportCertificateAsync>b__0() in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 46
+[2025-11-24 08:47:51.864 -08:00 ERR] Error exporting certificate
+System.ArgumentException: Password is required for PFX export
+   at CACApp.Services.CertificateExportService.<>c__DisplayClass2_0.<ExportCertificateAsync>b__0() in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 46
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CACApp.Services.CertificateExportService.ExportCertificateAsync(X509Certificate2 certificate, CertificateExportFormat format, String password) in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 18
+   at CACApp.Controllers.CertificateExportController.ExportCertificate(CertificateExportRequest request) in C:\Users\tom.harris\Documents\CACApp\Controllers\CertificateExportController.cs:line 33
+[2025-11-24 08:47:55.817 -08:00 INF] Exporting certificate 37FB1EDB5882A8A8EF1A97841740A5BB6999686F in format "Der"
+[2025-11-24 08:47:55.820 -08:00 INF] Certificate exported successfully. Size: 1234 bytes
+[2025-11-24 08:48:01.611 -08:00 INF] Exporting certificate 37FB1EDB5882A8A8EF1A97841740A5BB6999686F in format "Pfx"
+[2025-11-24 08:48:01.613 -08:00 ERR] Error exporting certificate
+System.ArgumentException: Password is required for PFX export
+   at CACApp.Services.CertificateExportService.<>c__DisplayClass2_0.<ExportCertificateAsync>b__0() in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 46
+[2025-11-24 08:48:01.616 -08:00 ERR] Error exporting certificate
+System.ArgumentException: Password is required for PFX export
+   at CACApp.Services.CertificateExportService.<>c__DisplayClass2_0.<ExportCertificateAsync>b__0() in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 46
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CACApp.Services.CertificateExportService.ExportCertificateAsync(X509Certificate2 certificate, CertificateExportFormat format, String password) in C:\Users\tom.harris\Documents\CACApp\Services\CertificateExportService.cs:line 18
+   at CACApp.Controllers.CertificateExportController.ExportCertificate(CertificateExportRequest request) in C:\Users\tom.harris\Documents\CACApp\Controllers\CertificateExportController.cs:line 33
+[2025-11-24 09:13:18.474 -08:00 INF] Starting CAC Application
+[2025-11-24 09:23:11.641 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-24 09:23:30.238 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:23:33.829 -08:00 INF] Getting certificate chain info for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:23:33.832 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 09:23:33.859 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 09:23:33.862 -08:00 DBG] Chain element 0: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=1
+[2025-11-24 09:23:33.865 -08:00 DBG] Element status: Certificate=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status="Revoked", Info=The certificate is revoked.
+[2025-11-24 09:23:33.888 -08:00 WRN] Certificate REVOKED: Certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Reason: The certificate is revoked.
+[2025-11-24 09:23:33.891 -08:00 DBG] Chain element 1: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 09:23:33.893 -08:00 DBG] Chain element 2: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 09:23:33.897 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 09:23:33.900 -08:00 INF] Offline chain build result: true, Chain elements: 3
+[2025-11-24 09:23:33.905 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 09:23:33.907 -08:00 INF] Final chain validation result: IsValid=true, HasRevocation=false, ErrorCount=1
+[2025-11-24 09:23:33.911 -08:00 DBG] Building final chain elements list. Chain length: 3
+[2025-11-24 09:23:33.914 -08:00 DBG] Chain element: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:23:33.916 -08:00 DBG] Chain element: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=737BEAA4D4563E186D6B4C455330579FA085A3BF
+[2025-11-24 09:23:33.920 -08:00 DBG] Chain element: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=D73CA91102A2204A36459ED32213B467D7CE97FB
+[2025-11-24 09:23:37.003 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:23:37.012 -08:00 INF] Certificate category determined: Government
+[2025-11-24 09:23:37.020 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:23:37.022 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 09:23:37.024 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 09:23:37.027 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 09:23:37.029 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 09:23:37.031 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 09:23:37.033 -08:00 INF] Offline chain build result: true
+[2025-11-24 09:23:37.036 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 09:23:37.038 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 09:23:37.040 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 09:23:37.045 -08:00 INF] CAC validation succeeded: Valid Government CAC
+[2025-11-24 09:23:48.672 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:23:48.674 -08:00 INF] Certificate category determined: Government
+[2025-11-24 09:23:48.676 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:23:48.677 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 09:23:48.678 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 09:23:48.680 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 09:23:48.682 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 09:23:48.683 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 09:23:48.685 -08:00 INF] Offline chain build result: true
+[2025-11-24 09:23:48.686 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 09:23:48.688 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 09:23:48.690 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 09:23:48.693 -08:00 INF] CAC validation succeeded: Valid Government CAC
+[2025-11-24 09:24:12.747 -08:00 INF] Checking CRL/OCSP status for certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:12.749 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:12.752 -08:00 DBG] Checking CRL status: http://crl.disa.mil/crl/DODEMAILCA_71.crl
+[2025-11-24 09:24:12.861 -08:00 DBG] Checking OCSP status: http://ocsp.disa.mil for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:13.224 -08:00 ERR] Error checking OCSP: http://ocsp.disa.mil
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at CACApp.Services.CrlOcspMonitoringService.CheckOcspStatusAsync(String ocspUrl, X509Certificate2 certificate) in C:\Users\tom.harris\Documents\CACApp\Services\CrlOcspMonitoringService.cs:line 151
+[2025-11-24 09:24:13.719 -08:00 DBG] CRL parsed successfully. LastUpdate: null, NextUpdate: null, RevokedCount: 0
+[2025-11-24 09:24:13.723 -08:00 INF] CRL/OCSP check completed. CRL accessible: true, OCSP accessible: false
+[2025-11-24 09:24:37.809 -08:00 INF] Checking CRL/OCSP status for certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:37.812 -08:00 INF] Found 2 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:37.814 -08:00 DBG] Checking CRL status: http://crl.disa.mil/crl/DODEMAILCA_71.crl
+[2025-11-24 09:24:37.816 -08:00 DBG] Checking OCSP status: http://ocsp.disa.mil for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:38.268 -08:00 ERR] Error checking OCSP: http://ocsp.disa.mil
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at CACApp.Services.CrlOcspMonitoringService.CheckOcspStatusAsync(String ocspUrl, X509Certificate2 certificate) in C:\Users\tom.harris\Documents\CACApp\Services\CrlOcspMonitoringService.cs:line 151
+[2025-11-24 09:24:38.692 -08:00 DBG] CRL parsed successfully. LastUpdate: null, NextUpdate: null, RevokedCount: 0
+[2025-11-24 09:24:38.696 -08:00 INF] CRL/OCSP check completed. CRL accessible: true, OCSP accessible: false
+[2025-11-24 09:24:39.616 -08:00 INF] Getting detailed certificate information for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:24:39.650 -08:00 INF] Certificate details extracted successfully. KeyUsage count: 2, SAN count: 0
+[2025-11-24 09:56:08.467 -08:00 INF] Starting CAC Application
+[2025-11-24 09:57:48.342 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-24 09:58:05.946 -08:00 INF] Found 3 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US (including default OCSP)
+[2025-11-24 09:58:13.854 -08:00 INF] Getting certificate chain info for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:58:13.857 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 09:58:13.891 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 09:58:13.895 -08:00 DBG] Chain element 0: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=1
+[2025-11-24 09:58:13.899 -08:00 DBG] Element status: Certificate=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status="Revoked", Info=The certificate is revoked.
+[2025-11-24 09:58:13.918 -08:00 WRN] Certificate REVOKED: Certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Reason: The certificate is revoked.
+[2025-11-24 09:58:13.920 -08:00 DBG] Chain element 1: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 09:58:13.924 -08:00 DBG] Chain element 2: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Issuer=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Status count=0
+[2025-11-24 09:58:13.927 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 09:58:13.929 -08:00 INF] Offline chain build result: true, Chain elements: 3
+[2025-11-24 09:58:13.932 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 09:58:13.934 -08:00 INF] Final chain validation result: IsValid=true, HasRevocation=false, ErrorCount=1
+[2025-11-24 09:58:13.937 -08:00 DBG] Building final chain elements list. Chain length: 3
+[2025-11-24 09:58:13.941 -08:00 DBG] Chain element: Subject=CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:58:13.943 -08:00 DBG] Chain element: Subject=CN=DOD EMAIL CA-71, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=737BEAA4D4563E186D6B4C455330579FA085A3BF
+[2025-11-24 09:58:13.946 -08:00 DBG] Chain element: Subject=CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US, Valid=true, Thumbprint=D73CA91102A2204A36459ED32213B467D7CE97FB
+[2025-11-24 09:58:22.099 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 09:58:22.109 -08:00 INF] Certificate category determined: Government
+[2025-11-24 09:58:22.123 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:58:22.126 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 09:58:22.128 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 09:58:22.137 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 09:58:22.145 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 09:58:22.149 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 09:58:22.154 -08:00 INF] Offline chain build result: true
+[2025-11-24 09:58:22.157 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 09:58:22.160 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 09:58:22.162 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 09:58:22.167 -08:00 INF] CAC validation succeeded: Valid Government CAC
+[2025-11-24 09:58:43.954 -08:00 INF] Checking CRL/OCSP status for certificate: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:58:43.957 -08:00 INF] Found 3 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US (including default OCSP)
+[2025-11-24 09:58:43.960 -08:00 DBG] Checking CRL status: http://crl.disa.mil/crl/DODEMAILCA_71.crl
+[2025-11-24 09:58:44.047 -08:00 DBG] Checking OCSP status: http://ocsp.disa.mil for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:58:44.052 -08:00 DBG] Checking OCSP status: http://ocsp.usgov.pki.mil/ocsp for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 09:58:44.307 -08:00 ERR] Error checking OCSP: http://ocsp.disa.mil
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at CACApp.Services.CrlOcspMonitoringService.CheckOcspStatusAsync(String ocspUrl, X509Certificate2 certificate) in C:\Users\tom.harris\Documents\CACApp\Services\CrlOcspMonitoringService.cs:line 151
+[2025-11-24 09:58:44.565 -08:00 DBG] CRL parsed successfully. LastUpdate: null, NextUpdate: null, RevokedCount: 0
+[2025-11-24 09:59:14.072 -08:00 WRN] OCSP check timeout: http://ocsp.usgov.pki.mil/ocsp
+[2025-11-24 09:59:14.076 -08:00 INF] CRL/OCSP check completed. CRL accessible: true, OCSP accessible: false
+[2025-11-24 10:29:55.045 -08:00 INF] Starting CAC Application
+[2025-11-24 10:37:46.594 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-24 10:37:59.317 -08:00 INF] Found 3 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US (including default OCSP)
+[2025-11-24 10:38:04.154 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 10:38:04.172 -08:00 INF] Certificate category determined: Government
+[2025-11-24 10:38:04.190 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 10:38:04.192 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 10:38:04.195 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 10:38:04.198 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 10:38:04.201 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 10:38:04.203 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 10:38:04.205 -08:00 INF] Offline chain build result: true
+[2025-11-24 10:38:04.207 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 10:38:04.209 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 10:38:04.211 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 10:38:04.213 -08:00 INF] CAC validation succeeded: Valid Government CAC
+[2025-11-24 10:38:19.669 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 10:38:19.671 -08:00 INF] Certificate category determined: Government
+[2025-11-24 10:38:19.674 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 10:38:19.676 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 10:38:19.678 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 10:38:19.680 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 10:38:19.682 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 10:38:19.684 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 10:38:19.687 -08:00 INF] Offline chain build result: true
+[2025-11-24 10:38:19.691 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 10:38:19.692 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 10:38:19.695 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 10:38:19.698 -08:00 INF] CAC validation succeeded: Valid Government CAC
+[2025-11-24 10:38:23.279 -08:00 INF] Starting CAC online validation for subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US, Thumbprint: 37FB1EDB5882A8A8EF1A97841740A5BB6999686F
+[2025-11-24 10:38:23.282 -08:00 INF] Certificate category determined: Government
+[2025-11-24 10:38:23.285 -08:00 DBG] Validating certificate chain for CAC validation. Subject: CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US
+[2025-11-24 10:38:23.286 -08:00 DBG] Building certificate chain with online revocation checking
+[2025-11-24 10:38:23.288 -08:00 INF] Chain build result: false, Chain elements: 3
+[2025-11-24 10:38:23.290 -08:00 DBG] Chain status: "Revoked", Information: The certificate is revoked.
+[2025-11-24 10:38:23.292 -08:00 WRN] Certificate chain validation: Online check reported REVOKED. Status: "Revoked", Info: The certificate is revoked.
+[2025-11-24 10:38:23.294 -08:00 INF] Revocation reported online - verifying with offline check to rule out false positives
+[2025-11-24 10:38:23.296 -08:00 INF] Offline chain build result: true
+[2025-11-24 10:38:23.299 -08:00 WRN] Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.
+[2025-11-24 10:38:23.301 -08:00 INF] Certificate chain validation succeeded
+[2025-11-24 10:38:23.302 -08:00 WRN] Online validation failed but offline validation succeeded: Online revocation check reported revoked: The certificate is revoked.
+[2025-11-24 10:38:23.303 -08:00 INF] CAC validation succeeded: Valid Government CAC

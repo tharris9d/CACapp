@@ -1,0 +1,70 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f7;
+  margin: 0;
+  padding: 0;
+}
+
+.status-panel {
+  background-color: #667eea;
+  color: white;
+  padding: 20px;
+}
+
+.status-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.status-details {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: bold;
+  color: #2d3748;
+  padding: 15px;
+}
+
+.btn-primary {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.btn-primary:hover {
+  background-color: #5568d3;
+  border-color: #5568d3;
+}
+
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #2d3748;
+  border-color: #e2e8f0;
+}
+
+.btn-danger {
+  background-color: #fc8181;
+  border-color: #fc8181;
+}
+
+.text-box {
+  font-family: 'Consolas', monospace;
+  font-size: 12px;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  min-height: 200px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+

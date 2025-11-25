@@ -1,0 +1,74 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\tom.harris\\Documents\\CACApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{21DD8655-25E7-4599-936B-7CAF098BCFC3}|CACApp.csproj|c:\\users\\tom.harris\\documents\\cacapp\\controllers\\cacvalidationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21DD8655-25E7-4599-936B-7CAF098BCFC3}|CACApp.csproj|solutionrelative:controllers\\cacvalidationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{21DD8655-25E7-4599-936B-7CAF098BCFC3}|CACApp.csproj|c:\\users\\tom.harris\\documents\\cacapp\\models\\certificaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21DD8655-25E7-4599-936B-7CAF098BCFC3}|CACApp.csproj|solutionrelative:models\\certificaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:2:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:4:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CacValidationController.cs",
+              "DocumentMoniker": "C:\\Users\\tom.harris\\Documents\\CACApp\\Controllers\\CacValidationController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CacValidationController.cs",
+              "ToolTip": "C:\\Users\\tom.harris\\Documents\\CACApp\\Controllers\\CacValidationController.cs",
+              "RelativeToolTip": "Controllers\\CacValidationController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-21T18:40:21.278Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CertificateRequest.cs",
+              "DocumentMoniker": "C:\\Users\\tom.harris\\Documents\\CACApp\\Models\\CertificateRequest.cs",
+              "RelativeDocumentMoniker": "Models\\CertificateRequest.cs",
+              "ToolTip": "C:\\Users\\tom.harris\\Documents\\CACApp\\Models\\CertificateRequest.cs",
+              "RelativeToolTip": "Models\\CertificateRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-21T18:39:15.83Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
