@@ -1,6 +1,9 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CACApp.Services;
 
@@ -29,6 +32,34 @@ public class CacReaderService : ICacReaderService
 
     [DllImport("winscard.dll", CharSet = CharSet.Auto)]
     private static extern int SCardStatus(IntPtr hCard, StringBuilder szReaderName, ref int pcchReaderLen, out int pdwState, out int pdwProtocol, byte[] pbAtr, ref int pcbAtrLen);
+
+    // Windows API for finding and centering windows
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    private static extern IntPtr FindWindow(string? lpClassName, string? lpWindowName);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+    [DllImport("user32.dll")]
+    private static extern int GetSystemMetrics(int nIndex);
+
+    private const int SM_CXSCREEN = 0;
+    private const int SM_CYSCREEN = 1;
+    private const uint SWP_NOSIZE = 0x0001;
+    private const uint SWP_NOZORDER = 0x0004;
+    private const uint SWP_SHOWWINDOW = 0x0040;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
 
     public event EventHandler<string>? StatusChanged;
 
@@ -242,30 +273,27 @@ public class CacReaderService : ICacReaderService
 
                     if (cacCert != null)
                     {
-                        if (!string.IsNullOrEmpty(pin))
+                        StatusChanged?.Invoke(this, "Certificate found. Verifying private key access...");
+                        
+                        // Start monitoring for PIN dialog BEFORE attempting to access private key
+                        // This ensures we catch the dialog as soon as it appears
+                        Task.Run(() => CenterWindowsPinDialog());
+                        
+                        // Small delay to let monitoring start
+                        Thread.Sleep(100);
+                        
+                        // Verify that we can actually access the private key
+                        // This will trigger Windows PIN prompt if needed, or use cached PIN
+                        // If PIN is incorrect or not provided, this will fail
+                        bool canAccessPrivateKey = VerifyPrivateKeyAccess(cacCert);
+                        
+                        if (!canAccessPrivateKey)
                         {
-                            StatusChanged?.Invoke(this, "PIN provided. Accessing certificate private key...");
-                            try
-                            {
-                                var privateKey = cacCert.GetRSAPrivateKey();
-                                if (privateKey != null)
-                                {
-                                    StatusChanged?.Invoke(this, "Certificate found and accessible successfully");
-                                }
-                                else
-                                {
-                                    StatusChanged?.Invoke(this, "Certificate found but private key access may require PIN entry");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                StatusChanged?.Invoke(this, $"Certificate found but private key access failed: {ex.Message}. Windows may prompt for PIN.");
-                            }
+                            StatusChanged?.Invoke(this, "Cannot access private key. PIN may be incorrect or required.");
+                            return null;
                         }
-                        else
-                        {
-                            StatusChanged?.Invoke(this, "Certificate found successfully. Windows may prompt for PIN when accessing private key.");
-                        }
+                        
+                        StatusChanged?.Invoke(this, "Certificate accessible. Private key verified.");
                         return cacCert;
                     }
                     else
@@ -306,6 +334,332 @@ public class CacReaderService : ICacReaderService
         catch
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Verifies that the private key is accessible by attempting a cryptographic operation.
+    /// Windows will prompt for PIN if needed, or use cached credentials.
+    /// This ensures that PIN authentication actually occurs (either through Windows prompt or cached PIN).
+    /// </summary>
+    private bool VerifyPrivateKeyAccess(X509Certificate2 certificate)
+    {
+        try
+        {
+            // Attempt to access the private key
+            var privateKey = certificate.GetRSAPrivateKey();
+            if (privateKey == null)
+            {
+                StatusChanged?.Invoke(this, "Private key not available");
+                return false;
+            }
+
+            // Try to perform a small cryptographic operation to verify we can actually use the key
+            // This will trigger Windows PIN prompt if PIN is not cached, or use cached PIN
+            byte[] testData = Encoding.UTF8.GetBytes("VERIFY_KEY_ACCESS");
+            
+            try
+            {
+                // Attempt to sign data - this requires PIN authentication (either cached or prompted)
+                // If PIN is wrong or access is denied, this will throw an exception
+                byte[] signature = privateKey.SignData(testData, System.Security.Cryptography.HashAlgorithmName.SHA256, System.Security.Cryptography.RSASignaturePadding.Pkcs1);
+                
+                // If we get here, the private key is accessible (PIN was correct or cached)
+                return true;
+            }
+            catch (System.Security.Cryptography.CryptographicException ex)
+            {
+                // Cryptographic exceptions typically indicate:
+                // - PIN failure (user entered wrong PIN or cancelled)
+                // - Access denied
+                // - Key not accessible
+                StatusChanged?.Invoke(this, $"Private key access failed: {ex.Message}");
+                return false;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                StatusChanged?.Invoke(this, $"Access denied: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Other exceptions might indicate different issues
+                StatusChanged?.Invoke(this, $"Error accessing private key: {ex.Message}");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusChanged?.Invoke(this, $"Failed to verify private key access: {ex.Message}");
+            return false;
+        }
+    }
+
+    private HashSet<IntPtr> processedWindows = new HashSet<IntPtr>();
+
+    /// <summary>
+    /// Attempts to find and center the Windows Smart Card PIN dialog window.
+    /// This runs in a background thread and aggressively polls for ANY new dialog windows.
+    /// </summary>
+    private void CenterWindowsPinDialog()
+    {
+        try
+        {
+            processedWindows.Clear();
+            
+            // Poll for up to 15 seconds, checking every 25ms (very aggressive)
+            for (int i = 0; i < 600; i++)
+            {
+                Thread.Sleep(25);
+
+                // Method 1: Check foreground window first (fastest)
+                IntPtr foregroundWnd = GetForegroundWindow();
+                if (foregroundWnd != IntPtr.Zero && IsWindowVisible(foregroundWnd) && !processedWindows.Contains(foregroundWnd))
+                {
+                    if (IsPinDialog(foregroundWnd))
+                    {
+                        processedWindows.Add(foregroundWnd);
+                        CenterWindow(foregroundWnd);
+                        // Keep monitoring this specific window
+                        MonitorAndCenterWindow(foregroundWnd);
+                        return;
+                    }
+                }
+
+                // Method 2: Enum ALL visible windows and check for dialogs (most thorough)
+                // Do this more frequently to catch dialogs as soon as they appear
+                if (i % 4 == 0) // Every 100ms
+                {
+                    EnumWindows((hWnd, lParam) =>
+                    {
+                        try
+                        {
+                            if (hWnd != IntPtr.Zero && 
+                                IsWindowVisible(hWnd) && 
+                                !processedWindows.Contains(hWnd))
+                            {
+                                if (IsPinDialog(hWnd))
+                                {
+                                    processedWindows.Add(hWnd);
+                                    CenterWindow(hWnd);
+                                    // Start monitoring this window
+                                    Task.Run(() => MonitorAndCenterWindow(hWnd));
+                                    return false; // Stop enumeration - found it
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Continue enumeration on error
+                        }
+                        return true; // Continue enumeration
+                    }, IntPtr.Zero);
+                }
+
+                // Method 3: Also check common dialog class names directly
+                if (i % 8 == 0) // Every 200ms
+                {
+                    string[] possibleClasses = new[]
+                    {
+                        "#32770", // Standard dialog class - most common
+                        "Credential Dialog Xaml Host",
+                        "Microsoft.Windows.SecureAssessmentBrowser",
+                        "Windows.Security.Credentials.UI.CredentialPicker",
+                        "CredUI" // Credential UI
+                    };
+
+                    foreach (string className in possibleClasses)
+                    {
+                        IntPtr hWnd = FindWindow(className, null);
+                        if (hWnd != IntPtr.Zero && 
+                            IsWindowVisible(hWnd) && 
+                            !processedWindows.Contains(hWnd))
+                        {
+                            if (IsPinDialog(hWnd))
+                            {
+                                processedWindows.Add(hWnd);
+                                CenterWindow(hWnd);
+                                MonitorAndCenterWindow(hWnd);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Silently fail - this is a best-effort feature
+        }
+    }
+
+    /// <summary>
+    /// Continuously monitors and centers a specific window until it's closed.
+    /// </summary>
+    private void MonitorAndCenterWindow(IntPtr hWnd)
+    {
+        try
+        {
+            for (int i = 0; i < 200; i++) // Monitor for up to 5 seconds
+            {
+                Thread.Sleep(25);
+                
+                if (!IsWindowVisible(hWnd))
+                {
+                    break; // Window closed
+                }
+                
+                // Re-center the window periodically in case it moves
+                if (i % 4 == 0) // Every 100ms
+                {
+                    CenterWindow(hWnd);
+                }
+            }
+        }
+        catch
+        {
+            // Silently fail
+        }
+    }
+
+    /// <summary>
+    /// Checks if a window is likely the Windows PIN dialog.
+    /// Uses more lenient criteria to catch any dialog that might be the PIN prompt.
+    /// </summary>
+    private bool IsPinDialog(IntPtr hWnd)
+    {
+        try
+        {
+            if (hWnd == IntPtr.Zero) return false;
+
+            StringBuilder className = new StringBuilder(256);
+            StringBuilder windowText = new StringBuilder(256);
+
+            GetClassName(hWnd, className, className.Capacity);
+            GetWindowText(hWnd, windowText, windowText.Capacity);
+
+            string classNameStr = className.ToString().ToLower();
+            string windowTextStr = windowText.ToString().ToLower();
+
+            // Check if window is dialog-sized (typical for dialogs)
+            GetWindowRect(hWnd, out RECT rect);
+            int width = rect.Right - rect.Left;
+            int height = rect.Bottom - rect.Top;
+            bool isDialogSize = width > 150 && width < 1000 && height > 80 && height < 800;
+
+            if (!isDialogSize) return false;
+
+            // Check for common PIN dialog indicators in window text
+            bool hasPinKeywords = windowTextStr.Contains("pin") || 
+                                  windowTextStr.Contains("smart card") ||
+                                  windowTextStr.Contains("credential") ||
+                                  windowTextStr.Contains("password") ||
+                                  windowTextStr.Contains("enter") ||
+                                  windowTextStr.Contains("security");
+
+            // Check for dialog class names
+            bool isDialogClass = classNameStr == "#32770" || // Standard dialog
+                                 classNameStr.Contains("credential") ||
+                                 classNameStr.Contains("dialog") ||
+                                 classNameStr.Contains("xaml") ||
+                                 classNameStr.Contains("cred") ||
+                                 classNameStr == "credui" ||
+                                 classNameStr.Contains("secure");
+
+            // If it's a dialog class OR has PIN keywords, consider it a candidate
+            // Be more lenient - center any dialog that appears during PIN verification
+            return isDialogClass || hasPinKeywords;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool IsWindowVisible(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+    private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+    [DllImport("user32.dll")]
+    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+    [DllImport("user32.dll")]
+    private static extern bool BringWindowToTop(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll")]
+    private static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+    private const int SW_RESTORE = 9;
+    private const int SW_SHOW = 5;
+
+    /// <summary>
+    /// Centers a window on the primary screen and brings it to foreground.
+    /// Uses multiple methods to ensure the window is centered.
+    /// </summary>
+    private void CenterWindow(IntPtr hWnd)
+    {
+        try
+        {
+            if (hWnd == IntPtr.Zero) return;
+
+            // Show and restore window if minimized
+            ShowWindow(hWnd, SW_SHOW);
+            ShowWindow(hWnd, SW_RESTORE);
+
+            // Get window dimensions
+            GetWindowRect(hWnd, out RECT rect);
+            int windowWidth = rect.Right - rect.Left;
+            int windowHeight = rect.Bottom - rect.Top;
+
+            // Get screen dimensions
+            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+            // Calculate center position
+            int x = (screenWidth - windowWidth) / 2;
+            int y = (screenHeight - windowHeight) / 2;
+
+            // Try multiple methods to center the window
+            // Method 1: SetWindowPos
+            SetWindowPos(hWnd, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
+            
+            // Method 2: MoveWindow (sometimes works better for system dialogs)
+            MoveWindow(hWnd, x, y, windowWidth, windowHeight, true);
+            
+            // Method 3: SetWindowPos again with show flag
+            SetWindowPos(hWnd, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
+            
+            // Bring to foreground
+            BringWindowToTop(hWnd);
+            SetForegroundWindow(hWnd);
+            
+            // Small delay then try again (sometimes Windows needs a moment)
+            Thread.Sleep(50);
+            SetWindowPos(hWnd, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
+        }
+        catch
+        {
+            // Silently fail
         }
     }
 

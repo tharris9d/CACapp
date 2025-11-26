@@ -51,6 +51,7 @@ export class HomeComponent implements OnInit {
   showPasswordPromptForImport = false;
   passwordForImport = '';
   pendingImportFile: File | null = null;
+  usePinModal = false; // Toggle for PIN modal vs Windows PIN prompt (default: Windows PIN prompt)
 
   constructor(
     private cacReaderService: CacReaderService,
@@ -99,15 +100,21 @@ export class HomeComponent implements OnInit {
 
   readCacCard(): void {
     if (!this.selectedReader) return;
-    this.showPinEntry = true;
+    
+    if (this.usePinModal) {
+      // Show PIN modal
+      this.showPinEntry = true;
+    } else {
+      // Skip PIN modal, go straight to reading (Windows will prompt for PIN)
+      this.readCacCardDirectly();
+    }
   }
 
-  onPinSubmitted(pin: string): void {
-    this.showPinEntry = false;
+  readCacCardDirectly(pin?: string): void {
     if (!this.selectedReader) return;
 
     this.isLoading = true;
-    this.updateStatus('Reading CAC', 'Accessing CAC card with provided PIN...');
+    this.updateStatus('Reading CAC', 'Accessing CAC card. Windows will prompt for PIN...');
 
     this.cacReaderService.readCacCertificate(this.selectedReader, pin).subscribe({
       next: (cert) => {
@@ -118,14 +125,28 @@ export class HomeComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.currentCertificate = null;
-        this.certificateInfo = '';
         const errorMsg = err.error?.error || err.error?.details || err.message || 'Failed to read CAC certificate';
-        this.updateStatus('Failed to Read CAC', errorMsg);
+        
+        // Check if it's an access/authentication error
+        if (errorMsg.toLowerCase().includes('access') || 
+            errorMsg.toLowerCase().includes('pin') || 
+            errorMsg.toLowerCase().includes('unauthorized') ||
+            errorMsg.toLowerCase().includes('denied')) {
+          this.updateStatus('Access Denied', 'Unable to access certificate. PIN may be incorrect or Windows PIN prompt was cancelled. Please try again.');
+        } else {
+          this.currentCertificate = null;
+          this.certificateInfo = '';
+          this.updateStatus('Failed to Read CAC', errorMsg);
+        }
         this.isLoading = false;
         console.error(err);
       }
     });
+  }
+
+  onPinSubmitted(pin: string): void {
+    this.showPinEntry = false;
+    this.readCacCardDirectly(pin);
   }
 
   onPinCancelled(): void {
