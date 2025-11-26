@@ -180,3 +180,29 @@
 [2025-11-26 11:53:54.785 -08:00 INF] Found 3 smart card reader(s)
 [2025-11-26 11:57:15.040 -08:00 INF] Starting CAC Application
 [2025-11-26 11:58:05.961 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-26 12:15:45.950 -08:00 INF] Starting CAC Application
+[2025-11-26 12:17:14.950 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-26 12:17:53.560 -08:00 INF] Found 3 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US (including default OCSP)
+[2025-11-26 12:19:35.195 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-26 12:19:42.933 -08:00 ERR] Error extracting revocation distribution points
+System.Security.Cryptography.CryptographicException: m_safeCertContext is an invalid handle.
+   at System.Security.Cryptography.X509Certificates.X509Certificate.ThrowIfInvalid()
+   at System.Security.Cryptography.X509Certificates.X509Certificate2.get_Extensions()
+   at CACApp.Services.CrlOcspMonitoringService.<>c__DisplayClass6_0.<GetRevocationDistributionPointsAsync>b__0() in C:\Users\tom.harris\Documents\CACapp\Services\CrlOcspMonitoringService.cs:line 265
+[2025-11-26 12:19:53.877 -08:00 ERR] Error extracting revocation distribution points
+System.Security.Cryptography.CryptographicException: m_safeCertContext is an invalid handle.
+   at System.Security.Cryptography.X509Certificates.X509Certificate.ThrowIfInvalid()
+   at System.Security.Cryptography.X509Certificates.X509Certificate2.get_Extensions()
+   at CACApp.Services.CrlOcspMonitoringService.<>c__DisplayClass6_0.<GetRevocationDistributionPointsAsync>b__0() in C:\Users\tom.harris\Documents\CACapp\Services\CrlOcspMonitoringService.cs:line 265
+[2025-11-26 12:20:00.587 -08:00 ERR] Error extracting revocation distribution points
+System.Security.Cryptography.CryptographicException: m_safeCertContext is an invalid handle.
+   at System.Security.Cryptography.X509Certificates.X509Certificate.ThrowIfInvalid()
+   at System.Security.Cryptography.X509Certificates.X509Certificate2.get_Extensions()
+   at CACApp.Services.CrlOcspMonitoringService.<>c__DisplayClass6_0.<GetRevocationDistributionPointsAsync>b__0() in C:\Users\tom.harris\Documents\CACapp\Services\CrlOcspMonitoringService.cs:line 265
+[2025-11-26 12:20:01.454 -08:00 ERR] Error extracting revocation distribution points
+System.Security.Cryptography.CryptographicException: m_safeCertContext is an invalid handle.
+   at System.Security.Cryptography.X509Certificates.X509Certificate.ThrowIfInvalid()
+   at System.Security.Cryptography.X509Certificates.X509Certificate2.get_Extensions()
+   at CACApp.Services.CrlOcspMonitoringService.<>c__DisplayClass6_0.<GetRevocationDistributionPointsAsync>b__0() in C:\Users\tom.harris\Documents\CACapp\Services\CrlOcspMonitoringService.cs:line 265
+[2025-11-26 12:21:05.988 -08:00 INF] Found 3 smart card reader(s)
+[2025-11-26 12:21:32.470 -08:00 INF] Found 3 revocation distribution points for certificate CN=HARRIS.B.THOMAS.1481283791, OU=CONTRACTOR, OU=PKI, OU=DoD, O=U.S. Government, C=US (including default OCSP)

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "20qQn65dCRM=",
+  "dgSpecHash": "+7UDWm4kiAY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\tom.harris\\Documents\\CACApp\\CACApp.csproj",
+  "projectFilePath": "C:\\Users\\tom.harris\\Documents\\CACapp\\CACApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\tom.harris\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.0\\microsoft.aspnetcore.openapi.9.0.0.nupkg.sha512",
     "C:\\Users\\tom.harris\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
