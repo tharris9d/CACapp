@@ -154,9 +154,16 @@ export class HomeComponent implements OnInit {
 
         // Show online validation failure notification prominently
         if (chainInfo.onlineValidationFailed && chainInfo.onlineValidationFailureReason) {
-          result += `⚠️ ONLINE VALIDATION FAILED ⚠️\n`;
-          result += `${chainInfo.onlineValidationFailureReason}\n`;
-          result += `Offline validation succeeded - certificate is valid.\n\n`;
+          result += `\n${chainInfo.onlineValidationFailureReason}\n\n`;
+        }
+        
+        // Check for real revocation in chain errors
+        const hasRealRevocation = chainInfo.chainErrors.some(error => 
+          error.includes('REAL REVOCATION') || error.includes('🚫')
+        );
+        if (hasRealRevocation) {
+          result += `\n🚫 REAL REVOCATION DETECTED 🚫\n`;
+          result += `The certificate has been confirmed as REVOKED by both online and offline checks.\n\n`;
         }
 
         if (chainInfo.chainErrors.length > 0) {
@@ -178,9 +185,15 @@ export class HomeComponent implements OnInit {
         }
 
         this.chainInfo = result;
-        const statusMessage = chainInfo.onlineValidationFailed
-          ? 'Certificate chain validated (offline) - online validation failed'
-          : (chainInfo.isValid ? 'Certificate chain validated successfully' : 'Certificate chain validation failed');
+        // Determine status message based on validation result
+        let statusMessage: string;
+        if (hasRealRevocation) {
+          statusMessage = 'Certificate REVOKED - Real revocation detected';
+        } else if (chainInfo.onlineValidationFailed) {
+          statusMessage = 'Certificate chain validated (offline) - connectivity issue with OCSP/CRL';
+        } else {
+          statusMessage = chainInfo.isValid ? 'Certificate chain validated successfully' : 'Certificate chain validation failed';
+        }
         this.updateStatus(
           chainInfo.isValid ? 'Chain Valid' : 'Chain Invalid',
           statusMessage
@@ -207,9 +220,7 @@ export class HomeComponent implements OnInit {
 
         // Show online validation failure notification prominently
         if (result.onlineValidationFailed && result.onlineValidationFailureReason) {
-          output += `⚠️ ONLINE VALIDATION FAILED ⚠️\n`;
-          output += `${result.onlineValidationFailureReason}\n`;
-          output += `Offline validation succeeded - certificate is valid.\n\n`;
+          output += `\n${result.onlineValidationFailureReason}\n\n`;
         }
 
         output += `Category: ${result.category}\n\n`;
@@ -224,9 +235,17 @@ export class HomeComponent implements OnInit {
         }
 
         this.validationResult = output;
-        const statusMessage = result.onlineValidationFailed
-          ? `Valid ${result.category} CAC (offline) - online validation failed`
-          : (result.isValid ? `Valid ${result.category} CAC` : result.status);
+        // Determine status message based on validation result
+        let statusMessage: string;
+        if (result.onlineValidationFailed && result.onlineValidationFailureReason) {
+          if (result.onlineValidationFailureReason.includes('CONNECTIVITY ISSUE')) {
+            statusMessage = `Valid ${result.category} CAC (offline) - connectivity issue with OCSP/CRL`;
+          } else {
+            statusMessage = `Valid ${result.category} CAC (offline) - online validation failed`;
+          }
+        } else {
+          statusMessage = result.isValid ? `Valid ${result.category} CAC` : result.status;
+        }
         this.updateStatus(
           result.isValid ? 'Validation Successful' : 'Validation Failed',
           statusMessage

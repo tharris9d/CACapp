@@ -50,3 +50,4 @@ C:\Users\tom.harris\Documents\CACApp\bin\Debug\net9.0-windows\Serilog.Settings.C
 C:\Users\tom.harris\Documents\CACApp\bin\Debug\net9.0-windows\Serilog.Sinks.Console.dll
 C:\Users\tom.harris\Documents\CACApp\bin\Debug\net9.0-windows\Serilog.Sinks.Debug.dll
 C:\Users\tom.harris\Documents\CACApp\bin\Debug\net9.0-windows\Serilog.Sinks.File.dll
+C:\Users\tom.harris\Documents\CACapp\obj\Debug\net9.0-windows\CACApp.sourcelink.json
