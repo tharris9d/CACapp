@@ -94,7 +94,9 @@ CACApp is a full-featured certificate management application designed to help us
 ## 📋 Requirements
 
 ### System Requirements
-- **OS**: Windows 10/11 (64-bit)
+- **OS**: Windows 10/11 (64-bit) **ONLY**
+  - ⚠️ **Mac/Linux Not Supported**: This application uses Windows-specific Smart Card API (`winscard.dll`) and requires Windows Smart Card Service
+  - For Mac/Linux support, significant refactoring would be needed to use PC/SC (PC/SC-Lite) instead
 - **.NET Runtime**: .NET 9.0 Runtime
 - **Smart Card Reader**: USB smart card reader with drivers installed
 - **Windows Smart Card Service**: Must be running
@@ -322,10 +324,28 @@ The application uses Serilog for structured logging:
 ## 🔒 Security Considerations
 
 - **PIN Entry**: PINs are handled securely and not logged
+  - **Windows PIN Prompt**: Windows Smart Card API uses Windows Credential Provider for PIN authentication
+  - **Dual Prompt**: Both the application PIN modal and Windows PIN prompt may appear - Windows handles the actual authentication
 - **Password Protection**: PFX exports require password protection
 - **Local Storage**: Certificates are stored locally in user's AppData folder
 - **No Network Transmission**: Private keys never leave the local machine
 - **Certificate Validation**: Always validates certificate chains before use
+
+## 🌐 Platform Compatibility
+
+### ✅ Supported Platforms
+- **Windows 10/11** (64-bit) - Fully supported
+  - Uses Windows Smart Card API (`winscard.dll`)
+  - Requires Windows Smart Card Service
+
+### ❌ Not Supported
+- **macOS** - Not supported
+  - Mac uses PC/SC (PC/SC-Lite) for smart card access, not Windows Smart Card API
+  - Would require complete rewrite of smart card access layer
+  - Consider using Windows VM or Boot Camp for Mac users
+- **Linux** - Not supported
+  - Linux uses PC/SC-Lite, similar to Mac
+  - Would require significant refactoring for cross-platform support
 
 ## 📄 License
 

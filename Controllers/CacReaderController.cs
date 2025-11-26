@@ -70,7 +70,7 @@ public class CacReaderController : ControllerBase
             
             if (certificate == null)
             {
-                return NotFound(new { error = "Failed to read CAC certificate" });
+                return Unauthorized(new { error = "Certificate access failed", details = "Unable to access certificate. PIN may be incorrect, required, or private key access was denied. Windows may prompt for PIN." });
             }
 
             byte[] certBytes;
