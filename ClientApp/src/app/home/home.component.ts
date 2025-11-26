@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit {
 
   readCacCard(): void {
     if (!this.selectedReader) return;
-    
+
     if (this.usePinModal) {
       // Show PIN modal
       this.showPinEntry = true;
@@ -116,6 +116,8 @@ export class HomeComponent implements OnInit {
     this.isLoading = true;
     this.updateStatus('Reading CAC', 'Accessing CAC card. Windows will prompt for PIN...');
 
+    // Use regular HTTP POST - form submission in iframe doesn't trigger Windows PIN dialog properly
+    // The PIN dialog is triggered by backend when accessing certificate private key
     this.cacReaderService.readCacCertificate(this.selectedReader, pin).subscribe({
       next: (cert) => {
         this.currentCertificate = cert;
@@ -126,12 +128,12 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         const errorMsg = err.error?.error || err.error?.details || err.message || 'Failed to read CAC certificate';
-        
+
         // Check if it's an access/authentication error
-        if (errorMsg.toLowerCase().includes('access') || 
-            errorMsg.toLowerCase().includes('pin') || 
-            errorMsg.toLowerCase().includes('unauthorized') ||
-            errorMsg.toLowerCase().includes('denied')) {
+        if (errorMsg.toLowerCase().includes('access') ||
+          errorMsg.toLowerCase().includes('pin') ||
+          errorMsg.toLowerCase().includes('unauthorized') ||
+          errorMsg.toLowerCase().includes('denied')) {
           this.updateStatus('Access Denied', 'Unable to access certificate. PIN may be incorrect or Windows PIN prompt was cancelled. Please try again.');
         } else {
           this.currentCertificate = null;
@@ -177,9 +179,9 @@ export class HomeComponent implements OnInit {
         if (chainInfo.onlineValidationFailed && chainInfo.onlineValidationFailureReason) {
           result += `\n${chainInfo.onlineValidationFailureReason}\n\n`;
         }
-        
+
         // Check for real revocation in chain errors
-        const hasRealRevocation = chainInfo.chainErrors.some(error => 
+        const hasRealRevocation = chainInfo.chainErrors.some(error =>
           error.includes('REAL REVOCATION') || error.includes('🚫')
         );
         if (hasRealRevocation) {

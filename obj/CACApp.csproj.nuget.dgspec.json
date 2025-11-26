@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tom.harris\\Documents\\CACApp\\CACApp.csproj": {}
+    "C:\\Users\\tom.harris\\Documents\\CACapp\\CACApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tom.harris\\Documents\\CACApp\\CACApp.csproj": {
+    "C:\\Users\\tom.harris\\Documents\\CACapp\\CACApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tom.harris\\Documents\\CACApp\\CACApp.csproj",
+        "projectUniqueName": "C:\\Users\\tom.harris\\Documents\\CACapp\\CACApp.csproj",
         "projectName": "CACApp",
-        "projectPath": "C:\\Users\\tom.harris\\Documents\\CACApp\\CACApp.csproj",
+        "projectPath": "C:\\Users\\tom.harris\\Documents\\CACapp\\CACApp.csproj",
         "packagesPath": "C:\\Users\\tom.harris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tom.harris\\Documents\\CACApp\\obj\\",
+        "outputPath": "C:\\Users\\tom.harris\\Documents\\CACapp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

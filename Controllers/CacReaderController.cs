@@ -62,10 +62,41 @@ public class CacReaderController : ControllerBase
     }
 
     [HttpPost("read")]
-    public async Task<ActionResult<CertificateDto>> ReadCacCertificate([FromBody] ReadCacRequest request)
+    [Consumes("application/json", "application/x-www-form-urlencoded")]
+    public async Task<ActionResult<CertificateDto>> ReadCacCertificate([FromBody] ReadCacRequest? request, [FromForm] string? data)
     {
         try
         {
+            // Handle form submission with JSON data
+            if (request == null && !string.IsNullOrEmpty(data))
+            {
+                try
+                {
+                    var formData = System.Text.Json.JsonSerializer.Deserialize<ReadCacRequest>(data);
+                    request = formData;
+                }
+                catch
+                {
+                    // If JSON parsing fails, try to parse as form data
+                }
+            }
+
+            // Fallback to query parameters if needed
+            if (request == null)
+            {
+                var readerName = Request.Form["readerName"].ToString();
+                var pin = Request.Form["pin"].ToString();
+                if (!string.IsNullOrEmpty(readerName))
+                {
+                    request = new ReadCacRequest { ReaderName = readerName, Pin = pin };
+                }
+            }
+
+            if (request == null)
+            {
+                return BadRequest(new { error = "Invalid request", details = "Reader name is required" });
+            }
+
             var certificate = await _cacReaderService.ReadCacCertificateAsync(request.ReaderName, request.Pin);
             
             if (certificate == null)
