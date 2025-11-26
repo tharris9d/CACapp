@@ -1,4 +1,7 @@
 # CACApp - Common Access Card Management & Validation Tool
+By Tom Harris
+Email: Tom.Harris@9di.com
+GNU General Public License
 
 A comprehensive Windows application for reading, validating, managing, and monitoring Common Access Cards (CAC) and other X.509 certificates. This tool provides advanced certificate chain validation, revocation checking, and certificate lifecycle management for DoD, Government, Military, and Contractor certificates.
 
