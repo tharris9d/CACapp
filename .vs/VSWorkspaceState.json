@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\ClientApp",
+    "\\ClientApp\\dist",
+    "\\ClientApp\\dist\\cac-app-client"
   ],
-  "SelectedNode": "\\C:\\Users\\tom.harris\\Documents\\CACapp",
+  "SelectedNode": "\\CACApp.csproj",
   "PreviewInSolutionExplorer": false
 }

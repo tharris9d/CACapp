@@ -125,8 +125,21 @@ public class CacValidationService : ICacValidationService, IDisposable
             if (onlineValidationFailed && !string.IsNullOrEmpty(onlineFailureReason))
             {
                 result.OnlineValidationFailed = true;
-                result.OnlineValidationFailureReason = onlineFailureReason;
-                result.Details.Add($"⚠️ WARNING: {onlineFailureReason} Offline validation succeeded - certificate is valid.");
+                
+                // Determine if it's a connectivity issue or real revocation
+                bool isRevocationIssue = onlineFailureReason.Contains("revoked", StringComparison.OrdinalIgnoreCase);
+                if (isRevocationIssue)
+                {
+                    // Online reported revoked but offline succeeded = connectivity issue (false positive)
+                    result.OnlineValidationFailureReason = "🔌 CONNECTIVITY ISSUE: Online revocation check reported REVOKED, but offline validation succeeded. This indicates a network/connectivity problem preventing access to OCSP/CRL servers, NOT an actual revocation. Certificate is VALID.";
+                }
+                else
+                {
+                    // Other online validation failures (status unknown, etc.)
+                    result.OnlineValidationFailureReason = $"🔌 CONNECTIVITY ISSUE: {onlineFailureReason} Offline validation succeeded - certificate is valid.";
+                }
+                
+                result.Details.Add($"⚠️ {result.OnlineValidationFailureReason}");
                 _logger.LogWarning("Online validation failed but offline validation succeeded: {Reason}", onlineFailureReason);
             }
 

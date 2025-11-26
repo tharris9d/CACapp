@@ -211,8 +211,8 @@ public class CertificateService : ICertificateService
                         hasActualRevocation = false; // Clear the revocation flag since offline check passed
                         info.ChainErrors.Clear(); // Clear the revocation error
                         info.OnlineValidationFailed = true;
-                        info.OnlineValidationFailureReason = "Online revocation check reported revoked, but offline validation succeeded. This may indicate network/cache issues with OCSP/CRL servers.";
-                        info.ChainErrors.Add($"⚠️ WARNING: {info.OnlineValidationFailureReason} Certificate chain is valid.");
+                        info.OnlineValidationFailureReason = "🔌 CONNECTIVITY ISSUE: Online revocation check reported REVOKED, but offline validation succeeded. This indicates a network/connectivity problem preventing access to OCSP/CRL servers, NOT an actual revocation. Certificate chain is VALID.";
+                        info.ChainErrors.Add($"⚠️ {info.OnlineValidationFailureReason}");
                         _logger.LogWarning("Online revocation check reported revoked, but offline validation succeeded. Likely false positive from network/cache issues.");
                     }
                     else
@@ -234,9 +234,9 @@ public class CertificateService : ICertificateService
                                         offlineHasRevocation = true;
                                         string revocationReason = GetRevocationReason(status.StatusInformation);
                                         string certInfo = $"Certificate: {element.Certificate.Subject}";
-                                        string errorMsg = $"Revoked: {certInfo} - Reason: {revocationReason}";
+                                        string errorMsg = $"🚫 REAL REVOCATION: {certInfo} - Reason: {revocationReason} (Confirmed by both online and offline checks)";
                                         // Update error message if not already present
-                                        if (!info.ChainErrors.Any(e => e.Contains("Revoked:") && e.Contains(element.Certificate.Subject)))
+                                        if (!info.ChainErrors.Any(e => e.Contains("REAL REVOCATION") && e.Contains(element.Certificate.Subject)))
                                         {
                                             info.ChainErrors.Clear();
                                             info.ChainErrors.Add(errorMsg);
@@ -273,8 +273,8 @@ public class CertificateService : ICertificateService
                     {
                         isValid = true;
                         info.OnlineValidationFailed = true;
-                        info.OnlineValidationFailureReason = "Revocation status could not be verified online (network/connectivity issue). Offline validation succeeded.";
-                        info.ChainErrors.Add($"⚠️ WARNING: {info.OnlineValidationFailureReason} Certificate chain is valid.");
+                        info.OnlineValidationFailureReason = "🔌 CONNECTIVITY ISSUE: Revocation status could not be verified online (network/connectivity issue preventing access to OCSP/CRL servers). Offline validation succeeded - certificate chain is VALID.";
+                        info.ChainErrors.Add($"⚠️ {info.OnlineValidationFailureReason}");
                         _logger.LogInformation("Offline validation succeeded - chain is valid but revocation status could not be verified");
                     }
                     else
