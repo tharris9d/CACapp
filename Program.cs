@@ -38,6 +38,7 @@ try
     builder.Services.AddSingleton<ICertificateStorageService, CertificateStorageService>();
     builder.Services.AddSingleton<ICertificateExportService, CertificateExportService>();
     builder.Services.AddHttpClient();
+    builder.Services.AddHttpClient("CrlOcspMonitoring");
     builder.Services.AddSingleton<ICrlOcspMonitoringService, CrlOcspMonitoringService>();
 
     var app = builder.Build();

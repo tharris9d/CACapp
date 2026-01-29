@@ -1,0 +1,12 @@
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\appsettings.Development.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\appsettings.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\angular.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\dist\cac-app-client\prerendered-routes.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\package-lock.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\package.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\proxy.conf.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\tsconfig.app.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\ClientApp\tsconfig.json
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\CACApp.pdb
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\aspnetcorev2_inprocess.dll
+C:\Users\tom.harris\Documents\CACApp\obj\Release\net9.0-windows\win-x64\PubTmp\Out\CACApp.exe
