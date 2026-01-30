@@ -1,4 +1,182 @@
-# Angular specific
+## .NET Build Artifacts
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options directory
+.vs/
+.vscode/
+
+# Visual Studio user-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio cache files
+*.vsidx
+*.vspscc
+*.vssscc
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# StyleCop
+StyleCopReport.xml
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Publish profiles
+*.pubxml
+*.pubxml.user
+*.publishproj
+
+# Microsoft Azure Web App publish settings
+publishsettings.json
+
+# NuGet Packages Directory
+**/packages/*
+!**/packages/build/
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+
+## Angular specific
 /dist/
 /out-tsc/
 /tmp/
@@ -26,20 +204,16 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-/.vs/CACapp/FileContentIndex/0143a9cf-b022-46b4-9ade-b51e253c067d.vsidx
-/.vs/CACapp/FileContentIndex/1a902153-3294-41e0-b96a-33b9e04c07e2.vsidx
-/.vs/CACapp/FileContentIndex/4a7f5596-8678-4acb-b861-f9e28ab39141.vsidx
-/.vs/CACapp/FileContentIndex/5d6a9df1-70ff-41be-958e-02189fc2cc69.vsidx
-/.vs/CACapp/FileContentIndex/64e9ac4b-0051-454c-a6ee-d3d53e437c17.vsidx
-/.vs/CACapp/FileContentIndex/676d7619-e7ad-49d1-af43-1ac084fea1cc.vsidx
-/.vs/CACapp/FileContentIndex/89667312-24a8-4ac6-855f-58a2110defba.vsidx
-/.vs/CACapp/FileContentIndex/8ecc44c6-f7fc-4c59-8e15-e62c692207e3.vsidx
-/.vs/CACapp/FileContentIndex/ef0f1599-e115-48d8-995b-d9ce1c428807.vsidx
-/.vs/CACapp/FileContentIndex/fa4b3be8-c458-4969-b0d5-021689bb6850.vsidx
-/.vs/CACapp/FileContentIndex/295068b3-d269-4f95-8abc-7eab49b43f20.vsidx
-/.vs/CACapp/FileContentIndex/f21f3ddf-e16c-4138-98b0-6ee353cfe353.vsidx
-/.vs/CACapp/FileContentIndex/0639dfe2-7cd2-4240-8cf5-053284dc4a49.vsidx
-/.vs/CACapp/FileContentIndex/0cf8f5ee-ea3e-4300-97db-326a0083527f.vsidx
-/.vs/CACapp/FileContentIndex/72e9a151-42e3-4685-9ab4-b05bc8a53ed9.vsidx
-/.vs/CACapp/FileContentIndex/ae4065aa-d7eb-48b9-b495-85ae94744e65.vsidx
-*.vsidx
+
+# Application logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
