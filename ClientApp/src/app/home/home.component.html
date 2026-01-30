@@ -108,20 +108,22 @@
                 💾 Export
               </button>
               <button type="button" class="btn btn-warning dropdown-toggle dropdown-toggle-split" 
-                      data-bs-toggle="dropdown" [disabled]="!currentCertificate || isLoading">
+                      data-bs-toggle="dropdown" 
+                      aria-expanded="false"
+                      [disabled]="!currentCertificate || isLoading">
                 <span class="visually-hidden">Toggle Dropdown</span>
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" (click)="exportCertificate(0)">Export as PEM</a></li>
-                <li><a class="dropdown-item" (click)="exportCertificate(1)">Export as DER</a></li>
-                <li><a class="dropdown-item" (click)="exportCertificate(2)">Export as PFX</a></li>
+                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); exportCertificate(0)">Export as PEM</a></li>
+                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); exportCertificate(1)">Export as DER</a></li>
+                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); exportCertificate(2)">Export as PFX</a></li>
               </ul>
             </div>
-            <button class="btn btn-secondary w-100 mt-2" type="button" [disabled]="isLoading">
+            <button class="btn btn-secondary w-100 mt-2" type="button" [disabled]="isLoading" (click)="fileInput.click()">
               📤 Import Certificate
-              <input type="file" accept=".pem,.der,.pfx,.p12,.crt,.cer" 
-                     (change)="onFileSelected($event)" style="display: none;">
             </button>
+            <input #fileInput type="file" accept=".pem,.der,.pfx,.p12,.crt,.cer" 
+                   (change)="onFileSelected($event)" style="display: none;">
           </div>
         </div>
       </div>

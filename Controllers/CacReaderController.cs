@@ -97,10 +97,38 @@ public class CacReaderController : ControllerBase
                 return BadRequest(new { error = "Invalid request", details = "Reader name is required" });
             }
 
+            // Check if reader is available before attempting to read
+            if (!string.IsNullOrEmpty(request.ReaderName))
+            {
+                var availableReaders = await _cacReaderService.GetAvailableReadersAsync();
+                if (!availableReaders.Contains(request.ReaderName))
+                {
+                    if (availableReaders.Count == 0)
+                    {
+                        return NotFound(new { error = "CAC Reader not found", details = $"Reader '{request.ReaderName}' is not available. No readers are currently detected. Please ensure your reader is connected and drivers are installed. Check that Windows Smart Card service is running." });
+                    }
+                    else
+                    {
+                        return NotFound(new { error = "CAC Reader not found", details = $"Reader '{request.ReaderName}' is not available. Available readers: {string.Join(", ", availableReaders)}. Please select a valid reader." });
+                    }
+                }
+            }
+
             var certificate = await _cacReaderService.ReadCacCertificateAsync(request.ReaderName, request.Pin);
             
             if (certificate == null)
             {
+                // Check readers again to see if the issue is reader availability
+                var currentReaders = await _cacReaderService.GetAvailableReadersAsync();
+                if (currentReaders.Count == 0)
+                {
+                    return NotFound(new { error = "CAC Reader not found", details = "No readers are currently available. The reader may have been disconnected. Please check your reader connection and try again." });
+                }
+                else if (!string.IsNullOrEmpty(request.ReaderName) && !currentReaders.Contains(request.ReaderName))
+                {
+                    return NotFound(new { error = "CAC Reader not found", details = $"Reader '{request.ReaderName}' is no longer available. Available readers: {string.Join(", ", currentReaders)}." });
+                }
+                
                 return Unauthorized(new { error = "Certificate access failed", details = "Unable to access certificate. PIN may be incorrect, required, or private key access was denied. Windows may prompt for PIN." });
             }
 

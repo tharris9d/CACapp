@@ -139,19 +139,53 @@ CACApp is a full-featured certificate management application designed to help us
    cd ..
    ```
 
-4. **Run the application**
+4. **Install frontend dev dependencies** (for concurrent server startup)
+   ```bash
+   cd ClientApp
+   npm install
+   cd ..
+   ```
+
+5. **Run the application**
+
+   **Option A: Using startup scripts (Recommended)**
+   
+   **Windows (PowerShell):**
+   ```powershell
+   .\start-dev.ps1
+   ```
+   
+   **Windows (Command Prompt):**
+   ```cmd
+   start-dev.bat
+   ```
+   
+   **Linux/Mac/WSL:**
+   ```bash
+   chmod +x start-dev.sh
+   ./start-dev.sh
+   ```
+   
+   **Option B: Using npm script (requires concurrently)**
+   ```bash
+   cd ClientApp
+   npm run start:all
+   ```
+   
+   **Option C: Manual (two terminals)**
    ```bash
    # Terminal 1: Start backend API
-   dotnet run
+   dotnet run --project CACApp.csproj
    
    # Terminal 2: Start frontend (in ClientApp directory)
    cd ClientApp
    npm start
    ```
 
-5. **Access the application**
+6. **Access the application**
    - Frontend: http://localhost:4200
-   - API Swagger UI: http://localhost:5000/swagger (or check `launchSettings.json` for actual port)
+   - API Swagger UI: http://localhost:5000/swagger
+   - Backend API: http://localhost:5000/api
 
 ## 📖 Usage
 
@@ -284,7 +318,50 @@ When revocation status cannot be determined:
 - **Message**: "🔌 CONNECTIVITY ISSUE: Revocation status could not be verified online"
 - **Action**: Certificate can be used, but revocation status is uncertain
 
+## 🔧 Development
+
+### Proxy Configuration
+
+The application uses an enhanced proxy configuration (`ClientApp/proxy.conf.js`) that:
+- Provides better error messages when the backend is unavailable
+- Includes timeout handling (30 seconds)
+- Supports WebSocket proxying
+- Logs proxy requests and responses for debugging
+
+If you see `ECONNREFUSED` errors, ensure the backend server is running on `http://localhost:5000`.
+
+### Starting Development Servers
+
+The easiest way to start both servers is using the provided startup scripts:
+- `start-dev.ps1` (PowerShell)
+- `start-dev.bat` (Windows CMD)
+- `start-dev.sh` (Bash/Linux/Mac/WSL)
+
+These scripts will:
+1. Check for required dependencies (.NET SDK, Node.js)
+2. Start the backend API server
+3. Start the Angular development server
+4. Display helpful status messages
+
+### CORS Configuration
+
+The backend is configured to allow requests from:
+- `http://localhost:4200` (default Angular dev server)
+- `http://127.0.0.1:4200`
+- `http://localhost:4201` (fallback if 4200 is in use)
+- `http://127.0.0.1:4201`
+
+If you need to use a different port, update the CORS configuration in `Program.cs`.
+
 ## 🐛 Troubleshooting
+
+### Proxy Connection Errors (ECONNREFUSED)
+
+If you see `ECONNREFUSED` errors in the Vite/Angular dev server:
+1. **Ensure backend is running**: The backend API must be running on `http://localhost:5000`
+2. **Check port conflicts**: Verify port 5000 is not in use by another application
+3. **Verify proxy configuration**: Check `ClientApp/proxy.conf.js` points to the correct backend URL
+4. **Check firewall**: Ensure Windows Firewall isn't blocking the connection
 
 ### No Readers Found
 - Ensure smart card reader is connected via USB

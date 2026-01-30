@@ -79,11 +79,15 @@ export class HomeComponent implements OnInit {
       next: (response) => {
         this.availableReaders = response.readers || [];
         if (this.availableReaders.length > 0) {
-          this.selectedReader = this.availableReaders[0];
+          // Auto-select first reader if none selected or if selected reader is not in list
+          if (!this.selectedReader || !this.availableReaders.includes(this.selectedReader)) {
+            this.selectedReader = this.availableReaders[0];
+          }
           this.updateStatus('Reader Found', `Found ${this.availableReaders.length} reader(s)`);
         } else {
           const errorMsg = response.error || response.message || 'No readers found';
           this.updateStatus('No Readers Found', errorMsg);
+          this.selectedReader = null;
           console.warn('No readers found:', response);
         }
         this.isLoading = false;
@@ -92,6 +96,7 @@ export class HomeComponent implements OnInit {
         const errorMsg = err.error?.message || err.error?.error || err.message || 'Failed to check readers';
         this.updateStatus('Error', errorMsg);
         this.availableReaders = [];
+        this.selectedReader = null;
         this.isLoading = false;
         console.error('Error checking readers:', err);
       }
@@ -129,8 +134,18 @@ export class HomeComponent implements OnInit {
       error: (err) => {
         const errorMsg = err.error?.error || err.error?.details || err.message || 'Failed to read CAC certificate';
 
+        // Check if it's a reader not found error
+        if (errorMsg.toLowerCase().includes('reader') && 
+            (errorMsg.toLowerCase().includes('not found') || 
+             errorMsg.toLowerCase().includes('not available'))) {
+          // Automatically refresh reader list
+          this.updateStatus('Reader Not Found', 'The selected reader is no longer available. Refreshing reader list...');
+          this.checkReaders();
+          // Clear selected reader so user can select a new one
+          this.selectedReader = null;
+        }
         // Check if it's an access/authentication error
-        if (errorMsg.toLowerCase().includes('access') ||
+        else if (errorMsg.toLowerCase().includes('access') ||
           errorMsg.toLowerCase().includes('pin') ||
           errorMsg.toLowerCase().includes('unauthorized') ||
           errorMsg.toLowerCase().includes('denied')) {

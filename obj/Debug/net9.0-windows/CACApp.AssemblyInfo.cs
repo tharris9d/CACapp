@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CACApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab6ab530305388bc57cde45da30d6f1c8d63c6c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ac2ac715007630ccbc050f875a9f404c36b9c0fd")]
 [assembly: System.Reflection.AssemblyProductAttribute("CACApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CACApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

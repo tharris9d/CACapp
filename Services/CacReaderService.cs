@@ -221,15 +221,28 @@ public class CacReaderService : ICacReaderService
                 var readers = GetAvailableReaders();
                 if (readers.Count == 0)
                 {
-                    StatusChanged?.Invoke(this, "No smart card readers found");
+                    StatusChanged?.Invoke(this, "No smart card readers found. Please ensure your reader is connected and drivers are installed. Check that Windows Smart Card service is running.");
                     return null;
                 }
 
                 string selectedReader = readerName ?? readers.First();
                 if (!readers.Contains(selectedReader))
                 {
-                    StatusChanged?.Invoke(this, $"Reader '{selectedReader}' not found");
-                    return null;
+                    // Re-check readers in case they changed
+                    readers = GetAvailableReaders();
+                    if (!readers.Contains(selectedReader))
+                    {
+                        if (readers.Count == 0)
+                        {
+                            StatusChanged?.Invoke(this, $"Reader '{selectedReader}' not found. No readers are currently available. Please check your reader connection and try refreshing the reader list.");
+                        }
+                        else
+                        {
+                            StatusChanged?.Invoke(this, $"Reader '{selectedReader}' not found. Available readers: {string.Join(", ", readers)}. Please select a valid reader and try again.");
+                        }
+                        return null;
+                    }
+                    // Reader found after re-check, continue
                 }
 
                 if (!string.IsNullOrEmpty(pin))
@@ -276,7 +289,7 @@ public class CacReaderService : ICacReaderService
                         StatusChanged?.Invoke(this, "Certificate found. Verifying private key access...");
                         
                         // Start monitoring for PIN dialog BEFORE attempting to access private key
-                        // This ensures we catch the dialog as soon as it appears
+                        // This ensures we catch the dialog as soon as it appears and bring it to foreground
                         Task.Run(() => CenterWindowsPinDialog());
                         
                         // Small delay to let monitoring start
@@ -639,23 +652,33 @@ public class CacReaderService : ICacReaderService
             int x = (screenWidth - windowWidth) / 2;
             int y = (screenHeight - windowHeight) / 2;
 
-            // Try multiple methods to center the window
-            // Method 1: SetWindowPos
-            SetWindowPos(hWnd, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
+            // CRITICAL: Bring window to top FIRST, then center it
+            // Use HWND_TOP (IntPtr.Zero) to bring to top of Z-order
+            const uint SWP_SHOWWINDOW_FLAGS = SWP_NOSIZE | SWP_SHOWWINDOW;
+            const IntPtr HWND_TOP = IntPtr.Zero;
             
-            // Method 2: MoveWindow (sometimes works better for system dialogs)
-            MoveWindow(hWnd, x, y, windowWidth, windowHeight, true);
+            // Method 1: Bring to top and center in one call
+            SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_SHOWWINDOW_FLAGS);
             
-            // Method 3: SetWindowPos again with show flag
-            SetWindowPos(hWnd, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
-            
-            // Bring to foreground
+            // Method 2: Force to foreground using multiple methods
             BringWindowToTop(hWnd);
             SetForegroundWindow(hWnd);
+            ShowWindow(hWnd, SW_SHOW);
+            ShowWindow(hWnd, SW_RESTORE);
             
-            // Small delay then try again (sometimes Windows needs a moment)
-            Thread.Sleep(50);
-            SetWindowPos(hWnd, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
+            // Method 3: MoveWindow (sometimes works better for system dialogs)
+            MoveWindow(hWnd, x, y, windowWidth, windowHeight, true);
+            
+            // Method 4: SetWindowPos again to ensure it stays on top
+            SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_SHOWWINDOW_FLAGS);
+            
+            // Small delay then try again (Windows sometimes needs a moment to process)
+            Thread.Sleep(100);
+            
+            // Final attempt - bring to foreground again
+            BringWindowToTop(hWnd);
+            SetForegroundWindow(hWnd);
+            SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_SHOWWINDOW_FLAGS);
         }
         catch
         {

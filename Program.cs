@@ -25,7 +25,13 @@ try
     {
         options.AddPolicy("AllowAngular", policy =>
         {
-            policy.WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
+            // Allow Angular dev server and common localhost variations
+            policy.WithOrigins(
+                    "http://localhost:4200",
+                    "http://127.0.0.1:4200",
+                    "http://localhost:4201", // In case port 4200 is in use
+                    "http://127.0.0.1:4201"
+                  )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
