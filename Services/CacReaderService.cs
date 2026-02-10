@@ -14,6 +14,7 @@ public class CacReaderService : ICacReaderService
     private const int SCARD_SHARE_SHARED = 0x00000002;
     private const int SCARD_LEAVE_CARD = 0x00000000;
     private const int SCARD_SCOPE_USER = 0x00000000;
+    private const int SCARD_SCOPE_SYSTEM = 0x00000002;
 
     [DllImport("winscard.dll")]
     private static extern int SCardEstablishContext(int dwScope, IntPtr pvReserved1, IntPtr pvReserved2, out IntPtr phContext);
@@ -91,19 +92,28 @@ public class CacReaderService : ICacReaderService
 
         try
         {
+            // Try USER scope first (works for logged-in users)
             int result = SCardEstablishContext(SCARD_SCOPE_USER, IntPtr.Zero, IntPtr.Zero, out hContext);
+            
+            // If USER scope fails, try SYSTEM scope (required for IIS/service accounts)
+            if (result != SCARD_S_SUCCESS)
+            {
+                StatusChanged?.Invoke(this, $"User scope failed (0x{result:X8}), trying system scope for IIS compatibility...");
+                result = SCardEstablishContext(SCARD_SCOPE_SYSTEM, IntPtr.Zero, IntPtr.Zero, out hContext);
+            }
+            
             if (result != SCARD_S_SUCCESS)
             {
                 string errorMsg = GetScardErrorMessage(result);
-                StatusChanged?.Invoke(this, $"Failed to establish smart card context: {errorMsg} (Error code: 0x{result:X8})");
+                StatusChanged?.Invoke(this, $"Failed to establish smart card context: {errorMsg} (Error code: 0x{result:X8}). Ensure Smart Card service is running and application pool has proper permissions.");
                 return readers;
             }
 
             int pcchReaders = 0;
             result = SCardListReaders(hContext, null, null, ref pcchReaders);
-            
+
             uint error = unchecked((uint)result);
-            
+
             // SCARD_E_NO_READERS_AVAILABLE (0x80100002) is expected when no readers are present
             // but we should still try to get the list if pcchReaders > 0
             if (result != SCARD_S_SUCCESS && error != 0x80100002U)
@@ -128,12 +138,12 @@ public class CacReaderService : ICacReaderService
                     // The Windows API returns a Unicode multi-string: reader names separated by null characters (2 bytes each), ending with double null (4 bytes)
                     // bufferSize now contains the actual length returned in characters
                     int actualByteLength = bufferSize * 2; // Convert characters to bytes
-                    
+
                     // Parse Unicode multi-string by converting to string and splitting
                     // This handles the multi-string format correctly
                     string multiString = Encoding.Unicode.GetString(mszReaders, 0, actualByteLength);
                     string[] readerNames = multiString.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
-                    
+
                     foreach (string readerName in readerNames)
                     {
                         if (!string.IsNullOrWhiteSpace(readerName) && !readers.Contains(readerName))
@@ -141,7 +151,7 @@ public class CacReaderService : ICacReaderService
                             readers.Add(readerName);
                         }
                     }
-                    
+
                     if (readers.Count == 0)
                     {
                         StatusChanged?.Invoke(this, "Smart card context established but no readers found. Please ensure your reader is connected and drivers are installed.");
@@ -186,14 +196,14 @@ public class CacReaderService : ICacReaderService
     {
         // Convert to uint for comparison since error codes are unsigned
         uint error = unchecked((uint)errorCode);
-        
+
         // Common error codes
         if (error == 0x80100001 || error == 0x80100002 || error == 0x8010000C || error == 0x80100010 || error == 0x8010007A || error == 0x80100083)
-            return "No smart card readers are available";
+            return "No smart card readers are available. For IIS: Ensure application pool identity has smart card hardware access permissions.";
         if (error == 0x8010000D || error == 0x8010006A)
-            return "Smart card service has been stopped";
+            return "Smart card service has been stopped. Start with: sc start SCardSvr (as Administrator)";
         if (error == 0x8010000E || error == 0x80100069)
-            return "Smart card service is not available";
+            return "Smart card service is not available. For IIS: Ensure SCardSvr service is running and application pool identity can access it.";
         if (error == 0x80100004 || error == 0x80100009 || error == 0x8010001C)
             return "No smart card is present";
         if (error == 0x80100007)
@@ -208,8 +218,10 @@ public class CacReaderService : ICacReaderService
             return "Invalid handle";
         if (error == 0x80100014 || error == 0x80100024)
             return "Invalid parameter";
-        
-        return $"Smart card error (Error code: 0x{error:X8})";
+        if (error == 0x80100065)
+            return "Access denied. For IIS: Application pool identity needs smart card hardware access. See IIS_DEPLOYMENT_GUIDE.md";
+
+        return $"Smart card error (Error code: 0x{error:X8}). For IIS deployment issues, see IIS_DEPLOYMENT_GUIDE.md";
     }
 
     public async Task<X509Certificate2?> ReadCacCertificateAsync(string? readerName = null, string? pin = null)
@@ -259,10 +271,20 @@ public class CacReaderService : ICacReaderService
 
                 try
                 {
+                    // Try USER scope first (works for logged-in users)
                     int result = SCardEstablishContext(SCARD_SCOPE_USER, IntPtr.Zero, IntPtr.Zero, out hContext);
+                    
+                    // If USER scope fails, try SYSTEM scope (required for IIS/service accounts)
                     if (result != SCARD_S_SUCCESS)
                     {
-                        StatusChanged?.Invoke(this, "Failed to establish smart card context");
+                        StatusChanged?.Invoke(this, $"User scope failed (0x{result:X8}), trying system scope for IIS compatibility...");
+                        result = SCardEstablishContext(SCARD_SCOPE_SYSTEM, IntPtr.Zero, IntPtr.Zero, out hContext);
+                    }
+                    
+                    if (result != SCARD_S_SUCCESS)
+                    {
+                        string errorMsg = GetScardErrorMessage(result);
+                        StatusChanged?.Invoke(this, $"Failed to establish smart card context: {errorMsg} (Error code: 0x{result:X8}). Ensure Smart Card service is running and application pool has proper permissions.");
                         return null;
                     }
 
@@ -287,25 +309,25 @@ public class CacReaderService : ICacReaderService
                     if (cacCert != null)
                     {
                         StatusChanged?.Invoke(this, "Certificate found. Verifying private key access...");
-                        
+
                         // Start monitoring for PIN dialog BEFORE attempting to access private key
                         // This ensures we catch the dialog as soon as it appears and bring it to foreground
                         Task.Run(() => CenterWindowsPinDialog());
-                        
+
                         // Small delay to let monitoring start
                         Thread.Sleep(100);
-                        
+
                         // Verify that we can actually access the private key
                         // This will trigger Windows PIN prompt if needed, or use cached PIN
                         // If PIN is incorrect or not provided, this will fail
                         bool canAccessPrivateKey = VerifyPrivateKeyAccess(cacCert);
-                        
+
                         if (!canAccessPrivateKey)
                         {
                             StatusChanged?.Invoke(this, "Cannot access private key. PIN may be incorrect or required.");
                             return null;
                         }
-                        
+
                         StatusChanged?.Invoke(this, "Certificate accessible. Private key verified.");
                         return cacCert;
                     }
@@ -340,8 +362,8 @@ public class CacReaderService : ICacReaderService
         try
         {
             var subject = cert.Subject;
-            return subject.Contains("CN=") && 
-                   (subject.Contains("GOV") || subject.Contains("MIL") || 
+            return subject.Contains("CN=") &&
+                   (subject.Contains("GOV") || subject.Contains("MIL") ||
                     subject.Contains("DoD") || subject.Contains("EMAILADDRESS"));
         }
         catch
@@ -370,13 +392,13 @@ public class CacReaderService : ICacReaderService
             // Try to perform a small cryptographic operation to verify we can actually use the key
             // This will trigger Windows PIN prompt if PIN is not cached, or use cached PIN
             byte[] testData = Encoding.UTF8.GetBytes("VERIFY_KEY_ACCESS");
-            
+
             try
             {
                 // Attempt to sign data - this requires PIN authentication (either cached or prompted)
                 // If PIN is wrong or access is denied, this will throw an exception
                 byte[] signature = privateKey.SignData(testData, System.Security.Cryptography.HashAlgorithmName.SHA256, System.Security.Cryptography.RSASignaturePadding.Pkcs1);
-                
+
                 // If we get here, the private key is accessible (PIN was correct or cached)
                 return true;
             }
@@ -419,7 +441,7 @@ public class CacReaderService : ICacReaderService
         try
         {
             processedWindows.Clear();
-            
+
             // Poll for up to 15 seconds, checking every 25ms (very aggressive)
             for (int i = 0; i < 600; i++)
             {
@@ -447,8 +469,8 @@ public class CacReaderService : ICacReaderService
                     {
                         try
                         {
-                            if (hWnd != IntPtr.Zero && 
-                                IsWindowVisible(hWnd) && 
+                            if (hWnd != IntPtr.Zero &&
+                                IsWindowVisible(hWnd) &&
                                 !processedWindows.Contains(hWnd))
                             {
                                 if (IsPinDialog(hWnd))
@@ -484,8 +506,8 @@ public class CacReaderService : ICacReaderService
                     foreach (string className in possibleClasses)
                     {
                         IntPtr hWnd = FindWindow(className, null);
-                        if (hWnd != IntPtr.Zero && 
-                            IsWindowVisible(hWnd) && 
+                        if (hWnd != IntPtr.Zero &&
+                            IsWindowVisible(hWnd) &&
                             !processedWindows.Contains(hWnd))
                         {
                             if (IsPinDialog(hWnd))
@@ -516,12 +538,12 @@ public class CacReaderService : ICacReaderService
             for (int i = 0; i < 200; i++) // Monitor for up to 5 seconds
             {
                 Thread.Sleep(25);
-                
+
                 if (!IsWindowVisible(hWnd))
                 {
                     break; // Window closed
                 }
-                
+
                 // Re-center the window periodically in case it moves
                 if (i % 4 == 0) // Every 100ms
                 {
@@ -563,7 +585,7 @@ public class CacReaderService : ICacReaderService
             if (!isDialogSize) return false;
 
             // Check for common PIN dialog indicators in window text
-            bool hasPinKeywords = windowTextStr.Contains("pin") || 
+            bool hasPinKeywords = windowTextStr.Contains("pin") ||
                                   windowTextStr.Contains("smart card") ||
                                   windowTextStr.Contains("credential") ||
                                   windowTextStr.Contains("password") ||
@@ -655,26 +677,26 @@ public class CacReaderService : ICacReaderService
             // CRITICAL: Bring window to top FIRST, then center it
             // Use HWND_TOP (IntPtr.Zero) to bring to top of Z-order
             const uint SWP_SHOWWINDOW_FLAGS = SWP_NOSIZE | SWP_SHOWWINDOW;
-            const IntPtr HWND_TOP = IntPtr.Zero;
-            
+            IntPtr HWND_TOP = IntPtr.Zero;
+
             // Method 1: Bring to top and center in one call
             SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_SHOWWINDOW_FLAGS);
-            
+
             // Method 2: Force to foreground using multiple methods
             BringWindowToTop(hWnd);
             SetForegroundWindow(hWnd);
             ShowWindow(hWnd, SW_SHOW);
             ShowWindow(hWnd, SW_RESTORE);
-            
+
             // Method 3: MoveWindow (sometimes works better for system dialogs)
             MoveWindow(hWnd, x, y, windowWidth, windowHeight, true);
-            
+
             // Method 4: SetWindowPos again to ensure it stays on top
             SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_SHOWWINDOW_FLAGS);
-            
+
             // Small delay then try again (Windows sometimes needs a moment to process)
             Thread.Sleep(100);
-            
+
             // Final attempt - bring to foreground again
             BringWindowToTop(hWnd);
             SetForegroundWindow(hWnd);
@@ -693,16 +715,16 @@ public class CacReaderService : ICacReaderService
             try
             {
                 StatusChanged?.Invoke(this, "Please enter your PIN when prompted");
-                
+
                 var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly);
-                
+
                 var certificates = store.Certificates.Find(X509FindType.FindByTimeValid, DateTime.Now, true);
                 var hasCacCert = certificates.Cast<X509Certificate2>()
                     .Any(c => c.HasPrivateKey && IsCacCertificate(c));
-                
+
                 store.Close();
-                
+
                 return hasCacCert;
             }
             catch
